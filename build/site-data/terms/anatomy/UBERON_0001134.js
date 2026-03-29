@@ -1,0 +1,195 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["anatomy::UBERON:0001134"] = {
+  "ontology": "anatomy",
+  "ontology_label": "Anatomy",
+  "term_id": "UBERON:0001134",
+  "term_label": "skeletal muscle tissue",
+  "disease_count": 6,
+  "direct_disease_count": 5,
+  "top_score": 1.0,
+  "mean_score": 0.766206,
+  "diseases": [
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Dystroglycanopathy",
+      "disease_term_id": "MONDO:0018276",
+      "source_file": "Dystroglycanopathy.yaml",
+      "term_id": "UBERON:0001134",
+      "term_label": "skeletal muscle tissue",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.714535,
+      "is_direct": true,
+      "best_source_term_id": "UBERON:0001134",
+      "best_source_term_label": "skeletal muscle tissue",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0001134"
+      ],
+      "supporting_source_term_labels": [
+        "skeletal muscle tissue"
+      ],
+      "supporting_source_node_names": [
+        "Sarcolemmal fragility and progressive muscle degeneration"
+      ]
+    },
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Multiple Acyl-CoA Dehydrogenase Deficiency",
+      "disease_term_id": "MONDO:0009282",
+      "source_file": "Multiple_Acyl-CoA_Dehydrogenase_Deficiency.yaml",
+      "term_id": "UBERON:0001134",
+      "term_label": "skeletal muscle tissue",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.714535,
+      "is_direct": true,
+      "best_source_term_id": "UBERON:0001134",
+      "best_source_term_label": "skeletal muscle tissue",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0001134"
+      ],
+      "supporting_source_term_labels": [
+        "skeletal muscle tissue"
+      ],
+      "supporting_source_node_names": [
+        "Lipid storage myopathy"
+      ]
+    },
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Myotonic Dystrophy Type 1",
+      "disease_term_id": "MONDO:0008056",
+      "source_file": "Myotonic_Dystrophy_Type_1.yaml",
+      "term_id": "UBERON:0001134",
+      "term_label": "skeletal muscle tissue",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.714535,
+      "is_direct": true,
+      "best_source_term_id": "UBERON:0001134",
+      "best_source_term_label": "skeletal muscle tissue",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0001134"
+      ],
+      "supporting_source_term_labels": [
+        "skeletal muscle tissue"
+      ],
+      "supporting_source_node_names": [
+        "Chloride Channel Mis-splicing and Myotonia",
+        "Toxic RNA Gain-of-Function"
+      ]
+    },
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Very Long-Chain Acyl-CoA Dehydrogenase Deficiency",
+      "disease_term_id": "MONDO:0008723",
+      "source_file": "VLCAD_Deficiency.yaml",
+      "term_id": "UBERON:0001134",
+      "term_label": "skeletal muscle tissue",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.714535,
+      "is_direct": true,
+      "best_source_term_id": "UBERON:0001134",
+      "best_source_term_label": "skeletal muscle tissue",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0001134"
+      ],
+      "supporting_source_term_labels": [
+        "skeletal muscle tissue"
+      ],
+      "supporting_source_node_names": [
+        "Tissue energy deficit in high-demand organs"
+      ]
+    },
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Maple Syrup Urine Disease",
+      "disease_term_id": "MONDO:0009563",
+      "source_file": "Maple_Syrup_Urine_Disease.yaml",
+      "term_id": "UBERON:0001134",
+      "term_label": "skeletal muscle tissue",
+      "score": 0.555556,
+      "direct_score": 0.555556,
+      "propagated_score": 0.555556,
+      "specificity": 0.714535,
+      "is_direct": true,
+      "best_source_term_id": "UBERON:0001134",
+      "best_source_term_label": "skeletal muscle tissue",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0001134"
+      ],
+      "supporting_source_term_labels": [
+        "skeletal muscle tissue"
+      ],
+      "supporting_source_node_names": [
+        "Skeletal Muscle Dysfunction"
+      ]
+    },
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Graves' Disease",
+      "disease_term_id": "MONDO:0005364",
+      "source_file": "Graves_Disease.yaml",
+      "term_id": "UBERON:0001134",
+      "term_label": "skeletal muscle tissue",
+      "score": 0.041681,
+      "direct_score": 0.0,
+      "propagated_score": 0.058333,
+      "specificity": 0.714535,
+      "is_direct": false,
+      "best_source_term_id": "UBERON:0001601",
+      "best_source_term_label": "extra-ocular muscle",
+      "best_source_path_score": 0.35,
+      "best_source_path": "part_of > is_a",
+      "best_path_hops": 2,
+      "best_path_is_a_hops": 1,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 1,
+      "supporting_source_term_ids": [
+        "UBERON:0001601"
+      ],
+      "supporting_source_term_labels": [
+        "extra-ocular muscle"
+      ],
+      "supporting_source_node_names": [
+        "TSHR-IGF1R Receptor Crosstalk in Orbital Fibroblasts"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "anatomy::UBERON:0001134" } }));

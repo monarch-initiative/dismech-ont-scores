@@ -1,0 +1,44 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["phenotype::HP:0031589"] = {
+  "ontology": "phenotype",
+  "ontology_label": "Phenotypes",
+  "term_id": "HP:0031589",
+  "term_label": "Suicidal ideation",
+  "disease_count": 1,
+  "direct_disease_count": 1,
+  "top_score": 1.0,
+  "mean_score": 1.0,
+  "diseases": [
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Empty Nose Syndrome",
+      "disease_term_id": "MONDO:1060148",
+      "source_file": "Empty_Nose_Syndrome.yaml",
+      "term_id": "HP:0031589",
+      "term_label": "Suicidal ideation",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 1.0,
+      "is_direct": true,
+      "best_source_term_id": "HP:0031589",
+      "best_source_term_label": "Suicidal ideation",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0031589"
+      ],
+      "supporting_source_term_labels": [
+        "Suicidal ideation"
+      ],
+      "supporting_source_node_names": [
+        "Suicidal ideation"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "phenotype::HP:0031589" } }));

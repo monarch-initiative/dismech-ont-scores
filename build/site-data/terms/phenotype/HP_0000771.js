@@ -1,0 +1,74 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["phenotype::HP:0000771"] = {
+  "ontology": "phenotype",
+  "ontology_label": "Phenotypes",
+  "term_id": "HP:0000771",
+  "term_label": "Gynecomastia",
+  "disease_count": 2,
+  "direct_disease_count": 2,
+  "top_score": 1.0,
+  "mean_score": 1.0,
+  "diseases": [
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Klinefelter Syndrome",
+      "disease_term_id": "MONDO:0006823",
+      "source_file": "Klinefelter_Syndrome.yaml",
+      "term_id": "HP:0000771",
+      "term_label": "Gynecomastia",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.889567,
+      "is_direct": true,
+      "best_source_term_id": "HP:0000771",
+      "best_source_term_label": "Gynecomastia",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0000771"
+      ],
+      "supporting_source_term_labels": [
+        "Gynecomastia"
+      ],
+      "supporting_source_node_names": [
+        "Gynecomastia"
+      ]
+    },
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Testicular Germ Cell Tumor",
+      "disease_term_id": "MONDO:0010108",
+      "source_file": "Testicular_Germ_Cell_Tumor.yaml",
+      "term_id": "HP:0000771",
+      "term_label": "Gynecomastia",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.889567,
+      "is_direct": true,
+      "best_source_term_id": "HP:0000771",
+      "best_source_term_label": "Gynecomastia",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0000771"
+      ],
+      "supporting_source_term_labels": [
+        "Gynecomastia"
+      ],
+      "supporting_source_node_names": [
+        "Gynecomastia"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "phenotype::HP:0000771" } }));

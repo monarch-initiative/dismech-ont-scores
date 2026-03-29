@@ -1,0 +1,4 @@
+data/context_scores/raw/
+__pycache__/
+*.pyc
+build/site-data/**/*.json

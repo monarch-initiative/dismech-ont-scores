@@ -1,0 +1,74 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["anatomy::UBERON:0001729"] = {
+  "ontology": "anatomy",
+  "ontology_label": "Anatomy",
+  "term_id": "UBERON:0001729",
+  "term_label": "oropharynx",
+  "disease_count": 2,
+  "direct_disease_count": 2,
+  "top_score": 1.0,
+  "mean_score": 0.75,
+  "diseases": [
+    {
+      "ontology": "anatomy",
+      "disorder_name": "HPV-Positive Head and Neck Cancer",
+      "disease_term_id": "MONDO:0044926",
+      "source_file": "HPV_Positive_Head_and_Neck_Cancer.yaml",
+      "term_id": "UBERON:0001729",
+      "term_label": "oropharynx",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.889567,
+      "is_direct": true,
+      "best_source_term_id": "UBERON:0001729",
+      "best_source_term_label": "oropharynx",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0001729"
+      ],
+      "supporting_source_term_labels": [
+        "oropharynx"
+      ],
+      "supporting_source_node_names": [
+        "E6-Mediated p53 Degradation"
+      ]
+    },
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Ludwig's Angina",
+      "disease_term_id": "MONDO:0006576",
+      "source_file": "Ludwigs_Angina.yaml",
+      "term_id": "UBERON:0001729",
+      "term_label": "oropharynx",
+      "score": 0.5,
+      "direct_score": 0.5,
+      "propagated_score": 0.5,
+      "specificity": 0.889567,
+      "is_direct": true,
+      "best_source_term_id": "UBERON:0001729",
+      "best_source_term_label": "oropharynx",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0001729"
+      ],
+      "supporting_source_term_labels": [
+        "oropharynx"
+      ],
+      "supporting_source_node_names": [
+        "Tongue Elevation and Airway Narrowing from Floor Edema"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "anatomy::UBERON:0001729" } }));

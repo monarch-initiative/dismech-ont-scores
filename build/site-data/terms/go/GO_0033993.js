@@ -1,0 +1,374 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["go::GO:0033993"] = {
+  "ontology": "go",
+  "ontology_label": "Biological Processes",
+  "term_id": "GO:0033993",
+  "term_label": "response to lipid",
+  "disease_count": 12,
+  "direct_disease_count": 0,
+  "top_score": 0.422872,
+  "mean_score": 0.153166,
+  "diseases": [
+    {
+      "ontology": "go",
+      "disorder_name": "Alcoholic Liver Disease",
+      "disease_term_id": "MONDO:0043693",
+      "source_file": "Alcoholic_Liver_Disease.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.422872,
+      "direct_score": 0.0,
+      "propagated_score": 0.7,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0032496",
+      "best_source_term_label": "response to lipopolysaccharide",
+      "best_source_path_score": 0.7,
+      "best_source_path": "is_a",
+      "best_path_hops": 1,
+      "best_path_is_a_hops": 1,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0032496"
+      ],
+      "supporting_source_term_labels": [
+        "response to lipopolysaccharide"
+      ],
+      "supporting_source_node_names": [
+        "Gut-liver axis and endotoxin translocation"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Small Intestinal Bacterial Overgrowth",
+      "disease_term_id": "MONDO:0400000",
+      "source_file": "Small_Intestinal_Bacterial_Overgrowth.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.422872,
+      "direct_score": 0.0,
+      "propagated_score": 0.7,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:1903412",
+      "best_source_term_label": "response to bile acid",
+      "best_source_path_score": 0.7,
+      "best_source_path": "is_a",
+      "best_path_hops": 1,
+      "best_path_is_a_hops": 1,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:1903412"
+      ],
+      "supporting_source_term_labels": [
+        "response to bile acid"
+      ],
+      "supporting_source_node_names": [
+        "Bacterial overgrowth in small intestine"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Leptospirosis",
+      "disease_term_id": "MONDO:0005825",
+      "source_file": "Leptospirosis.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.21651,
+      "direct_score": 0.0,
+      "propagated_score": 0.3584,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0032496",
+      "best_source_term_label": "response to lipopolysaccharide",
+      "best_source_path_score": 0.7,
+      "best_source_path": "is_a",
+      "best_path_hops": 1,
+      "best_path_is_a_hops": 1,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0032496"
+      ],
+      "supporting_source_term_labels": [
+        "response to lipopolysaccharide"
+      ],
+      "supporting_source_node_names": [
+        "Leptospiral GLP engagement of Na/K-ATPase"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Cushing's Syndrome",
+      "disease_term_id": "MONDO:0018912",
+      "source_file": "Cushings_Syndrome.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.207207,
+      "direct_score": 0.0,
+      "propagated_score": 0.343,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0051384",
+      "best_source_term_label": "response to glucocorticoid",
+      "best_source_path_score": 0.343,
+      "best_source_path": "is_a > is_a > is_a",
+      "best_path_hops": 3,
+      "best_path_is_a_hops": 3,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0051384"
+      ],
+      "supporting_source_term_labels": [
+        "response to glucocorticoid"
+      ],
+      "supporting_source_node_names": [
+        "Metabolic Consequences of Hypercortisolism"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Major Depressive Disorder",
+      "disease_term_id": "MONDO:0002009",
+      "source_file": "Major_Depressive_Disorder.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.145045,
+      "direct_score": 0.0,
+      "propagated_score": 0.2401,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0071385",
+      "best_source_term_label": "cellular response to glucocorticoid stimulus",
+      "best_source_path_score": 0.2401,
+      "best_source_path": "is_a > is_a > is_a > is_a",
+      "best_path_hops": 4,
+      "best_path_is_a_hops": 4,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0071385"
+      ],
+      "supporting_source_term_labels": [
+        "cellular response to glucocorticoid stimulus"
+      ],
+      "supporting_source_node_names": [
+        "HPA Axis Dysregulation"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Benign Prostatic Hyperplasia",
+      "disease_term_id": "MONDO:0010811",
+      "source_file": "Benign_Prostatic_Hyperplasia.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.072523,
+      "direct_score": 0.0,
+      "propagated_score": 0.12005,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0030521",
+      "best_source_term_label": "androgen receptor signaling pathway",
+      "best_source_path_score": 0.12005,
+      "best_source_path": "is_a > is_a > part_of > is_a > is_a",
+      "best_path_hops": 5,
+      "best_path_is_a_hops": 4,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 1,
+      "supporting_source_term_ids": [
+        "GO:0030521"
+      ],
+      "supporting_source_term_labels": [
+        "androgen receptor signaling pathway"
+      ],
+      "supporting_source_node_names": [
+        "Androgen-Dependent Growth"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "ER-Positive Breast Cancer",
+      "disease_term_id": "MONDO:0021116",
+      "source_file": "ER_Positive_Breast_Cancer.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.072523,
+      "direct_score": 0.0,
+      "propagated_score": 0.12005,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0030520",
+      "best_source_term_label": "estrogen receptor signaling pathway",
+      "best_source_path_score": 0.12005,
+      "best_source_path": "is_a > is_a > part_of > is_a > is_a",
+      "best_path_hops": 5,
+      "best_path_is_a_hops": 4,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 1,
+      "supporting_source_term_ids": [
+        "GO:0030520"
+      ],
+      "supporting_source_term_labels": [
+        "estrogen receptor signaling pathway"
+      ],
+      "supporting_source_node_names": [
+        "Estrogen Receptor Activation"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Metastatic Prostate Cancer",
+      "disease_term_id": "MONDO:0008315",
+      "source_file": "Metastatic_Prostate_Cancer.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.072523,
+      "direct_score": 0.0,
+      "propagated_score": 0.12005,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0030521",
+      "best_source_term_label": "androgen receptor signaling pathway",
+      "best_source_path_score": 0.12005,
+      "best_source_path": "is_a > is_a > part_of > is_a > is_a",
+      "best_path_hops": 5,
+      "best_path_is_a_hops": 4,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 1,
+      "supporting_source_term_ids": [
+        "GO:0030521"
+      ],
+      "supporting_source_term_labels": [
+        "androgen receptor signaling pathway"
+      ],
+      "supporting_source_node_names": [
+        "Persistent Androgen Receptor Signaling"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Triple-Negative Breast Cancer",
+      "disease_term_id": "MONDO:0005494",
+      "source_file": "Triple_Negative_Breast_Cancer.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.072523,
+      "direct_score": 0.0,
+      "propagated_score": 0.12005,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0030520",
+      "best_source_term_label": "estrogen receptor signaling pathway",
+      "best_source_path_score": 0.12005,
+      "best_source_path": "is_a > is_a > part_of > is_a > is_a",
+      "best_path_hops": 5,
+      "best_path_is_a_hops": 4,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 1,
+      "supporting_source_term_ids": [
+        "GO:0030520"
+      ],
+      "supporting_source_term_labels": [
+        "estrogen receptor signaling pathway"
+      ],
+      "supporting_source_node_names": [
+        "Loss of Hormone Receptor Signaling"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Aromatase Deficiency",
+      "disease_term_id": "MONDO:0013301",
+      "source_file": "Aromatase_Deficiency.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.054392,
+      "direct_score": 0.0,
+      "propagated_score": 0.090037,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0030520",
+      "best_source_term_label": "estrogen receptor signaling pathway",
+      "best_source_path_score": 0.12005,
+      "best_source_path": "is_a > is_a > part_of > is_a > is_a",
+      "best_path_hops": 5,
+      "best_path_is_a_hops": 4,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 1,
+      "supporting_source_term_ids": [
+        "GO:0030520"
+      ],
+      "supporting_source_term_labels": [
+        "estrogen receptor signaling pathway"
+      ],
+      "supporting_source_node_names": [
+        "Estrogen Deficiency"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "PIK3CA-Mutant Breast Cancer",
+      "disease_term_id": "MONDO:0004989",
+      "source_file": "PIK3CA_Mutant_Breast_Cancer.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.051802,
+      "direct_score": 0.0,
+      "propagated_score": 0.08575,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0030520",
+      "best_source_term_label": "estrogen receptor signaling pathway",
+      "best_source_path_score": 0.12005,
+      "best_source_path": "is_a > is_a > part_of > is_a > is_a",
+      "best_path_hops": 5,
+      "best_path_is_a_hops": 4,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 1,
+      "supporting_source_term_ids": [
+        "GO:0030520"
+      ],
+      "supporting_source_term_labels": [
+        "estrogen receptor signaling pathway"
+      ],
+      "supporting_source_node_names": [
+        "Endocrine Resistance"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Metastatic Breast Carcinoma",
+      "disease_term_id": "MONDO:0004989",
+      "source_file": "Metastatic_Breast_Carcinoma.yaml",
+      "term_id": "GO:0033993",
+      "term_label": "response to lipid",
+      "score": 0.027196,
+      "direct_score": 0.0,
+      "propagated_score": 0.045019,
+      "specificity": 0.604103,
+      "is_direct": false,
+      "best_source_term_id": "GO:0030520",
+      "best_source_term_label": "estrogen receptor signaling pathway",
+      "best_source_path_score": 0.12005,
+      "best_source_path": "is_a > is_a > part_of > is_a > is_a",
+      "best_path_hops": 5,
+      "best_path_is_a_hops": 4,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 1,
+      "supporting_source_term_ids": [
+        "GO:0030520"
+      ],
+      "supporting_source_term_labels": [
+        "estrogen receptor signaling pathway"
+      ],
+      "supporting_source_node_names": [
+        "ER and HER2 Receptor Plasticity"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "go::GO:0033993" } }));

@@ -1,0 +1,164 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["go::GO:0006858"] = {
+  "ontology": "go",
+  "ontology_label": "Biological Processes",
+  "term_id": "GO:0006858",
+  "term_label": "extracellular transport",
+  "disease_count": 5,
+  "direct_disease_count": 0,
+  "top_score": 0.364356,
+  "mean_score": 0.287473,
+  "diseases": [
+    {
+      "ontology": "go",
+      "disorder_name": "Empty Nose Syndrome",
+      "disease_term_id": "MONDO:1060148",
+      "source_file": "Empty_Nose_Syndrome.yaml",
+      "term_id": "GO:0006858",
+      "term_label": "extracellular transport",
+      "score": 0.364356,
+      "direct_score": 0.0,
+      "propagated_score": 0.49,
+      "specificity": 0.743583,
+      "is_direct": false,
+      "best_source_term_id": "GO:0120197",
+      "best_source_term_label": "mucociliary clearance",
+      "best_source_path_score": 0.49,
+      "best_source_path": "is_a > is_a",
+      "best_path_hops": 2,
+      "best_path_is_a_hops": 2,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0120197"
+      ],
+      "supporting_source_term_labels": [
+        "mucociliary clearance"
+      ],
+      "supporting_source_node_names": [
+        "Impaired mucociliary clearance"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Primary_Ciliary_Dyskinesia",
+      "disease_term_id": "MONDO:0016575",
+      "source_file": "Primary_Ciliary_Dyskinesia.yaml",
+      "term_id": "GO:0006858",
+      "term_label": "extracellular transport",
+      "score": 0.364356,
+      "direct_score": 0.0,
+      "propagated_score": 0.49,
+      "specificity": 0.743583,
+      "is_direct": false,
+      "best_source_term_id": "GO:0120197",
+      "best_source_term_label": "mucociliary clearance",
+      "best_source_path_score": 0.49,
+      "best_source_path": "is_a > is_a",
+      "best_path_hops": 2,
+      "best_path_is_a_hops": 2,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0120197"
+      ],
+      "supporting_source_term_labels": [
+        "mucociliary clearance"
+      ],
+      "supporting_source_node_names": [
+        "Impaired Mucociliary Clearance"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Spaceflight Associated Neuro-Ocular Syndrome",
+      "disease_term_id": "",
+      "source_file": "Spaceflight_Associated_Neuro-Ocular_Syndrome.yaml",
+      "term_id": "GO:0006858",
+      "term_label": "extracellular transport",
+      "score": 0.364356,
+      "direct_score": 0.0,
+      "propagated_score": 0.49,
+      "specificity": 0.743583,
+      "is_direct": false,
+      "best_source_term_id": "GO:0090660",
+      "best_source_term_label": "cerebrospinal fluid circulation",
+      "best_source_path_score": 0.49,
+      "best_source_path": "is_a > is_a",
+      "best_path_hops": 2,
+      "best_path_is_a_hops": 2,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0090660"
+      ],
+      "supporting_source_term_labels": [
+        "cerebrospinal fluid circulation"
+      ],
+      "supporting_source_node_names": [
+        "Cephalad Fluid Shift in Microgravity"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Cystic Fibrosis",
+      "disease_term_id": "MONDO:0009061",
+      "source_file": "Cystic_Fibrosis.yaml",
+      "term_id": "GO:0006858",
+      "term_label": "extracellular transport",
+      "score": 0.177734,
+      "direct_score": 0.0,
+      "propagated_score": 0.239024,
+      "specificity": 0.743583,
+      "is_direct": false,
+      "best_source_term_id": "GO:0120197",
+      "best_source_term_label": "mucociliary clearance",
+      "best_source_path_score": 0.49,
+      "best_source_path": "is_a > is_a",
+      "best_path_hops": 2,
+      "best_path_is_a_hops": 2,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0120197"
+      ],
+      "supporting_source_term_labels": [
+        "mucociliary clearance"
+      ],
+      "supporting_source_node_names": [
+        "Impaired Mucociliary Clearance"
+      ]
+    },
+    {
+      "ontology": "go",
+      "disorder_name": "Bronchiectasis",
+      "disease_term_id": "MONDO:0004822",
+      "source_file": "Bronchiectasis.yaml",
+      "term_id": "GO:0006858",
+      "term_label": "extracellular transport",
+      "score": 0.166563,
+      "direct_score": 0.0,
+      "propagated_score": 0.224,
+      "specificity": 0.743583,
+      "is_direct": false,
+      "best_source_term_id": "GO:0003351",
+      "best_source_term_label": "epithelial cilium movement involved in extracellular fluid movement",
+      "best_source_path_score": 0.7,
+      "best_source_path": "is_a",
+      "best_path_hops": 1,
+      "best_path_is_a_hops": 1,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "GO:0003351"
+      ],
+      "supporting_source_term_labels": [
+        "epithelial cilium movement involved in extracellular fluid movement"
+      ],
+      "supporting_source_node_names": [
+        "Impaired Mucociliary Clearance"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "go::GO:0006858" } }));

@@ -1,0 +1,44 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["anatomy::UBERON:0005623"] = {
+  "ontology": "anatomy",
+  "ontology_label": "Anatomy",
+  "term_id": "UBERON:0005623",
+  "term_label": "semi-lunar valve",
+  "disease_count": 1,
+  "direct_disease_count": 0,
+  "top_score": 0.2,
+  "mean_score": 0.2,
+  "diseases": [
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Noonan Syndrome",
+      "disease_term_id": "MONDO:0018997",
+      "source_file": "Noonan_Syndrome.yaml",
+      "term_id": "UBERON:0005623",
+      "term_label": "semi-lunar valve",
+      "score": 0.2,
+      "direct_score": 0.0,
+      "propagated_score": 0.2,
+      "specificity": 1.0,
+      "is_direct": false,
+      "best_source_term_id": "UBERON:0002146",
+      "best_source_term_label": "pulmonary valve",
+      "best_source_path_score": 0.7,
+      "best_source_path": "is_a",
+      "best_path_hops": 1,
+      "best_path_is_a_hops": 1,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0002146"
+      ],
+      "supporting_source_term_labels": [
+        "pulmonary valve"
+      ],
+      "supporting_source_node_names": [
+        "Cardiac Valve Morphogenesis Defects"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "anatomy::UBERON:0005623" } }));

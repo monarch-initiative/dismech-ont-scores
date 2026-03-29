@@ -1,0 +1,106 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["cell::CL:0001031"] = {
+  "ontology": "cell",
+  "ontology_label": "Cell Types",
+  "term_id": "CL:0001031",
+  "term_label": "cerebellar granule cell",
+  "disease_count": 3,
+  "direct_disease_count": 3,
+  "top_score": 1.0,
+  "mean_score": 0.752577,
+  "diseases": [
+    {
+      "ontology": "cell",
+      "disorder_name": "Medulloblastoma, SHH-Activated",
+      "disease_term_id": "MONDO:0850197",
+      "source_file": "Medulloblastoma_SHH_Activated.yaml",
+      "term_id": "CL:0001031",
+      "term_label": "cerebellar granule cell",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.824968,
+      "is_direct": true,
+      "best_source_term_id": "CL:0001031",
+      "best_source_term_label": "cerebellar granule cell",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "CL:0001031"
+      ],
+      "supporting_source_term_labels": [
+        "cerebellar granule cell"
+      ],
+      "supporting_source_node_names": [
+        "Cerebellar Granule Cell Proliferation",
+        "SHH Pathway Activation"
+      ]
+    },
+    {
+      "ontology": "cell",
+      "disorder_name": "Medulloblastoma, WNT-Activated",
+      "disease_term_id": "MONDO:0850196",
+      "source_file": "Medulloblastoma_WNT_Activated.yaml",
+      "term_id": "CL:0001031",
+      "term_label": "cerebellar granule cell",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.824968,
+      "is_direct": true,
+      "best_source_term_id": "CL:0001031",
+      "best_source_term_label": "cerebellar granule cell",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "CL:0001031"
+      ],
+      "supporting_source_term_labels": [
+        "cerebellar granule cell"
+      ],
+      "supporting_source_node_names": [
+        "Cell Proliferation and Tumor Formation",
+        "WNT/Beta-Catenin Pathway Activation"
+      ]
+    },
+    {
+      "ontology": "cell",
+      "disorder_name": "CACNA1A-Related Disorder",
+      "disease_term_id": "MONDO:0100254",
+      "source_file": "CACNA1A_Related_Disorder.yaml",
+      "term_id": "CL:0001031",
+      "term_label": "cerebellar granule cell",
+      "score": 0.257732,
+      "direct_score": 0.257732,
+      "propagated_score": 0.257732,
+      "specificity": 0.824968,
+      "is_direct": true,
+      "best_source_term_id": "CL:0001031",
+      "best_source_term_label": "cerebellar granule cell",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "CL:0001031"
+      ],
+      "supporting_source_term_labels": [
+        "cerebellar granule cell"
+      ],
+      "supporting_source_node_names": [
+        "P/Q-type Calcium Channel Dysfunction"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "cell::CL:0001031" } }));

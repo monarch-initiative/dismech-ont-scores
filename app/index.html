@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dismech Ontology Scores</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Ontology-centric disease priors</p>
+        <h1>dismech Ontology Scores</h1>
+        <p class="hero-text">
+          Browse disease scores through ontology terms instead of starting from disorders.
+          Search CL, UBERON, GO, and HPO terms, then inspect which diseases they pull up.
+        </p>
+      </div>
+      <div class="hero-meta" id="heroMeta">
+        <div class="stat-card">
+          <span class="stat-label">Terms</span>
+          <strong id="termCount">-</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Score Rows</span>
+          <strong id="rowCount">-</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Source SHA</span>
+          <strong id="sourceSha">-</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <section class="panel">
+          <label class="search-label" for="searchInput">Find ontology terms</label>
+          <input id="searchInput" class="search-input" type="search" placeholder="Search label or CURIE">
+          <div class="ontology-pills" id="ontologyPills"></div>
+          <p class="hint">
+            The browser is term-first. Click a term to load its ranked diseases and provenance.
+          </p>
+        </section>
+
+        <section class="panel panel-compact">
+          <div class="panel-header panel-header-compact">
+            <div>
+              <p class="eyebrow">Facet state</p>
+              <h2>Ontology overview</h2>
+            </div>
+            <div class="results-meta" id="facetMeta"></div>
+          </div>
+          <div id="ontologySummary" class="ontology-summary"></div>
+        </section>
+
+        <section class="panel panel-compact">
+          <div class="panel-header panel-header-compact">
+            <div>
+              <p class="eyebrow">Raw exports</p>
+              <h2>Downloads</h2>
+            </div>
+          </div>
+          <div id="downloadList" class="download-list"></div>
+        </section>
+      </aside>
+
+      <section class="content">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Term catalogue</p>
+              <h2 id="catalogueTitle">All terms</h2>
+            </div>
+            <div class="results-meta" id="resultsMeta"></div>
+          </div>
+          <div id="emptyState" class="empty-state hidden">
+            <h3>No matching terms</h3>
+            <p>Adjust the search text or ontology filter.</p>
+          </div>
+          <div id="termResults" class="term-results"></div>
+        </section>
+
+        <section class="panel detail-panel" id="detailPanel">
+          <div class="detail-placeholder" id="detailPlaceholder">
+            <p class="eyebrow">Term detail</p>
+            <h2>Select an ontology term</h2>
+            <p>The right-hand panel will show the disease ranking and propagated evidence for the chosen term.</p>
+          </div>
+          <div id="termDetail" class="term-detail hidden"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="../build/site-data/indexes/manifest.js"></script>
+  <script src="../build/site-data/indexes/overview.js"></script>
+  <script src="../build/site-data/indexes/term_index.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

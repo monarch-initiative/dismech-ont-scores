@@ -1,0 +1,225 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["phenotype::HP:0001382"] = {
+  "ontology": "phenotype",
+  "ontology_label": "Phenotypes",
+  "term_id": "HP:0001382",
+  "term_label": "Joint hypermobility",
+  "disease_count": 7,
+  "direct_disease_count": 7,
+  "top_score": 1.0,
+  "mean_score": 1.0,
+  "diseases": [
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Costello Syndrome",
+      "disease_term_id": "MONDO:0009026",
+      "source_file": "Costello_Syndrome.yaml",
+      "term_id": "HP:0001382",
+      "term_label": "Joint hypermobility",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.689976,
+      "is_direct": true,
+      "best_source_term_id": "HP:0001382",
+      "best_source_term_label": "Joint hypermobility",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0001382"
+      ],
+      "supporting_source_term_labels": [
+        "Joint hypermobility"
+      ],
+      "supporting_source_node_names": [
+        "Joint Hypermobility"
+      ]
+    },
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Ehlers-Danlos Syndrome",
+      "disease_term_id": "MONDO:0020066",
+      "source_file": "Ehlers-Danlos_Syndrome.yaml",
+      "term_id": "HP:0001382",
+      "term_label": "Joint hypermobility",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.689976,
+      "is_direct": true,
+      "best_source_term_id": "HP:0001382",
+      "best_source_term_label": "Joint hypermobility",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0001382"
+      ],
+      "supporting_source_term_labels": [
+        "Joint hypermobility"
+      ],
+      "supporting_source_node_names": [
+        "Joint Hypermobility",
+        "Recurrent Joint Dislocations"
+      ]
+    },
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Ehlers-Danlos Syndrome, COL5A1-related",
+      "disease_term_id": "MONDO:0007522",
+      "source_file": "Ehlers-Danlos_Syndrome_COL5A1-related.yaml",
+      "term_id": "HP:0001382",
+      "term_label": "Joint hypermobility",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.689976,
+      "is_direct": true,
+      "best_source_term_id": "HP:0001382",
+      "best_source_term_label": "Joint hypermobility",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0001382"
+      ],
+      "supporting_source_term_labels": [
+        "Joint hypermobility"
+      ],
+      "supporting_source_node_names": [
+        "Joint Hypermobility"
+      ]
+    },
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Fragile X Syndrome",
+      "disease_term_id": "MONDO:0010383",
+      "source_file": "Fragile_X_Syndrome.yaml",
+      "term_id": "HP:0001382",
+      "term_label": "Joint hypermobility",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.689976,
+      "is_direct": true,
+      "best_source_term_id": "HP:0001382",
+      "best_source_term_label": "Joint hypermobility",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0001382"
+      ],
+      "supporting_source_term_labels": [
+        "Joint hypermobility"
+      ],
+      "supporting_source_node_names": [
+        "Joint Hypermobility"
+      ]
+    },
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Loeys-Dietz Syndrome",
+      "disease_term_id": "MONDO:0018954",
+      "source_file": "Loeys-Dietz_Syndrome.yaml",
+      "term_id": "HP:0001382",
+      "term_label": "Joint hypermobility",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.689976,
+      "is_direct": true,
+      "best_source_term_id": "HP:0001382",
+      "best_source_term_label": "Joint hypermobility",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0001382"
+      ],
+      "supporting_source_term_labels": [
+        "Joint hypermobility"
+      ],
+      "supporting_source_node_names": [
+        "Joint Hypermobility"
+      ]
+    },
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Osteogenesis Imperfecta Type I",
+      "disease_term_id": "MONDO:0008146",
+      "source_file": "Osteogenesis_Imperfecta_Type_I.yaml",
+      "term_id": "HP:0001382",
+      "term_label": "Joint hypermobility",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.689976,
+      "is_direct": true,
+      "best_source_term_id": "HP:0001382",
+      "best_source_term_label": "Joint hypermobility",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0001382"
+      ],
+      "supporting_source_term_labels": [
+        "Joint hypermobility"
+      ],
+      "supporting_source_node_names": [
+        "Joint Hypermobility"
+      ]
+    },
+    {
+      "ontology": "phenotype",
+      "disorder_name": "Stickler Syndrome Type 1",
+      "disease_term_id": "MONDO:0007160",
+      "source_file": "Stickler_Syndrome_Type_1.yaml",
+      "term_id": "HP:0001382",
+      "term_label": "Joint hypermobility",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.689976,
+      "is_direct": true,
+      "best_source_term_id": "HP:0001382",
+      "best_source_term_label": "Joint hypermobility",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "HP:0001382"
+      ],
+      "supporting_source_term_labels": [
+        "Joint hypermobility"
+      ],
+      "supporting_source_node_names": [
+        "Joint Hypermobility"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "phenotype::HP:0001382" } }));

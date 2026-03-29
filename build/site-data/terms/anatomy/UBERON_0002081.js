@@ -1,0 +1,74 @@
+window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};
+window.ontologyScoresTermShards["anatomy::UBERON:0002081"] = {
+  "ontology": "anatomy",
+  "ontology_label": "Anatomy",
+  "term_id": "UBERON:0002081",
+  "term_label": "cardiac atrium",
+  "disease_count": 2,
+  "direct_disease_count": 1,
+  "top_score": 1.0,
+  "mean_score": 0.505765,
+  "diseases": [
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Holt-Oram syndrome",
+      "disease_term_id": "MONDO:0007732",
+      "source_file": "Holt_Oram.yaml",
+      "term_id": "UBERON:0002081",
+      "term_label": "cardiac atrium",
+      "score": 1.0,
+      "direct_score": 1.0,
+      "propagated_score": 1.0,
+      "specificity": 0.889567,
+      "is_direct": true,
+      "best_source_term_id": "UBERON:0002081",
+      "best_source_term_label": "cardiac atrium",
+      "best_source_path_score": 1.0,
+      "best_source_path": "self",
+      "best_path_hops": 0,
+      "best_path_is_a_hops": 0,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 0,
+      "supporting_source_term_ids": [
+        "UBERON:0002081"
+      ],
+      "supporting_source_term_labels": [
+        "cardiac atrium"
+      ],
+      "supporting_source_node_names": [
+        "TBX5 Haploinsufficiency and Enhancer Dysfunction"
+      ]
+    },
+    {
+      "ontology": "anatomy",
+      "disorder_name": "Hypertrophic Cardiomyopathy",
+      "disease_term_id": "MONDO:0005045",
+      "source_file": "Hypertrophic_Cardiomyopathy.yaml",
+      "term_id": "UBERON:0002081",
+      "term_label": "cardiac atrium",
+      "score": 0.011531,
+      "direct_score": 0.0,
+      "propagated_score": 0.012963,
+      "specificity": 0.889567,
+      "is_direct": false,
+      "best_source_term_id": "UBERON:0002135",
+      "best_source_term_label": "mitral valve",
+      "best_source_path_score": 0.175,
+      "best_source_path": "part_of > is_a > part_of",
+      "best_path_hops": 3,
+      "best_path_is_a_hops": 1,
+      "best_path_develops_from_hops": 0,
+      "best_path_part_of_hops": 2,
+      "supporting_source_term_ids": [
+        "UBERON:0002135"
+      ],
+      "supporting_source_term_labels": [
+        "mitral valve"
+      ],
+      "supporting_source_node_names": [
+        "Left Ventricular Outflow Tract Obstruction"
+      ]
+    }
+  ]
+};
+window.dispatchEvent(new CustomEvent('ontologyScoresTermShardReady', { detail: { key: "anatomy::UBERON:0002081" } }));
