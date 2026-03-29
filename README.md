@@ -1,82 +1,57 @@
 # dismech-ont-scores
 
-Derived ontology score exports and an ontology-centric browser built from
-[`dismech`](../dismech).
+Derived ontology-centric disease scores from
+[dismech](https://github.com/monarch-initiative/dismech), published as a static
+browser and downloadable TSVs.
 
-This repo is intentionally manual-first for now. It does not depend on GitHub
-Actions. The main workflow is:
+- Live browser: https://monarch-initiative.github.io/dismech-ont-scores/
+- Source knowledge base: https://dismech.monarchinitiative.org/
+- Scoring implementation: https://github.com/monarch-initiative/dismech/blob/main/src/dismech/export/context_score.py
 
-1. Export raw disease-to-ontology score TSVs from a local `dismech` checkout.
-2. Materialize browser-friendly JavaScript shards and a provenance manifest.
-3. Open the static ontology browser directly from disk or serve it locally.
+This repository is 100% derived. It is not the source of truth for disease
+curation. The curated assertions, scoring code, and provenance model live in
+`dismech`; this repo publishes the resulting browser payloads and download files.
 
-## What the browser does
+## What Is Published Here
 
-- Starts from ontology terms, not diseases.
-- Lets you browse by `cell`, `anatomy`, `go`, and `phenotype`.
-- Supports term search by label or CURIE.
-- Shows ranked diseases for a selected ontology term.
-- Preserves direct vs propagated score signal and best-source provenance.
+- An ontology-first browser over CL, UBERON, GO, and HPO terms.
+- Raw TSV downloads for users who want the full exports.
+- Static JavaScript shards that let the site run directly on GitHub Pages.
 
-## Manual workflow
+## How Scores Are Made
 
-From this repo:
+Scores are derived from curated annotations in `dismech`.
 
-```bash
-just rebuild ../dismech
-just serve
-```
+1. Direct disease-context signal comes from curated ontology annotations.
+   - Cells: `pathophysiology[].cell_types`
+   - Anatomy: `pathophysiology[].locations`
+   - Biological processes: `pathophysiology[].biological_processes`
+   - Phenotypes: `phenotypes[].phenotype_term`
+2. Each supporting node is weighted by its place in the disease mechanism graph.
+   Upstream mechanism nodes contribute more than downstream terminal nodes.
+3. Direct signal is propagated upward through ontology structure.
+   - CL: `is_a`, `develops_from`
+   - UBERON: `is_a`, `part_of`
+   - GO: `is_a`, `part_of`
+   - HPO: `is_a`
+4. Broad ancestors are penalized using corpus-level specificity, so generic
+   terms score lower than specific disease-relevant descendants.
+5. The exports preserve both the total score and its components, including
+   `direct_score`, `propagated_score`, `specificity`, and best-source provenance.
 
-Then open:
+## Downloads
 
-```text
-file:///Users/cjm/repos/dismech-ont-scores/index.html
-```
+- Full export: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/context_scores.tsv
+- Cell scores: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/cell_scores.tsv
+- Anatomy scores: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/anatomy_scores.tsv
+- GO scores: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/go_scores.tsv
+- Phenotype scores: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/phenotype_scores.tsv
 
-or:
+## Notes For Maintainers
 
-```text
-http://localhost:8000/
-```
-
-Useful variants:
-
-```bash
-just export-raw ../dismech
-just build-browser
-just clean
-```
-
-## Build outputs
-
-- Raw scorer output: `data/context_scores/raw/`
-- Browser data shards: `build/site-data/`
-- Browser entrypoint: `index.html`
-- Browser assets: `app/`
-- Published raw downloads: `build/site-data/downloads/*.tsv`
-
-The published static site is just:
-
-- `index.html`
-- `app/app.js`
-- `app/styles.css`
-- generated `build/site-data/**/*.js`
-- generated `build/site-data/downloads/*.tsv`
-
-JSON copies are not part of the normal site build. If you want them for
-debugging, run:
-
-```bash
-python3 scripts/build_browser_data.py \
-  --raw-dir data/context_scores/raw \
-  --output-dir build/site-data \
-  --dismech-dir ../dismech \
-  --write-json
-```
-
-## Notes
-
-- The build reads from the local source checkout you point it at; the default is
-  `../dismech`.
-- Provenance for each rebuild is written to
-  `build/site-data/indexes/manifest.js`.
+- The published site entrypoint is `index.html`.
+- Browser payloads live under `build/site-data/`.
+- Generated JSON is optional debug output only; the published site uses JS shards
+  and TSV downloads.
+- Regeneration is done from a local `dismech` checkout via the scripts and
+  `justfile` in this repo.
