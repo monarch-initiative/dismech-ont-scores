@@ -30,13 +30,13 @@ just serve
 Then open:
 
 ```text
-file:///Users/cjm/repos/dismech-ont-scores/app/index.html
+file:///Users/cjm/repos/dismech-ont-scores/index.html
 ```
 
 or:
 
 ```text
-http://localhost:8000/app/
+http://localhost:8000/
 ```
 
 Useful variants:
@@ -51,12 +51,13 @@ just clean
 
 - Raw scorer output: `data/context_scores/raw/`
 - Browser data shards: `build/site-data/`
-- Browser app: `app/`
+- Browser entrypoint: `index.html`
+- Browser assets: `app/`
 - Published raw downloads: `build/site-data/downloads/*.tsv`
 
 The published static site is just:
 
-- `app/index.html`
+- `index.html`
 - `app/app.js`
 - `app/styles.css`
 - generated `build/site-data/**/*.js`

@@ -1,4 +1,4 @@
-const DATA_ROOT = "../build/site-data";
+const DATA_ROOT = "build/site-data";
 
 class OntologyScoresApp {
   constructor() {
@@ -399,7 +399,7 @@ class OntologyScoresApp {
         <p class="eyebrow">Load error</p>
         <h2>Browser data is not ready</h2>
         <p>${this.escapeHtml(String(error.message || error))}</p>
-        <p>Run <code>just rebuild ../dismech</code> from the repo root, then refresh or reopen <code>app/index.html</code>.</p>
+        <p>Run <code>just rebuild ../dismech</code> from the repo root, then refresh or reopen <code>index.html</code>.</p>
       </div>
     `;
   }

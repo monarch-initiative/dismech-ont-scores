@@ -94,6 +94,29 @@ body::before {
   color: rgba(248, 246, 239, 0.88);
 }
 
+.hero-links {
+  margin: 18px 0 0;
+}
+
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255, 251, 242, 0.12);
+  border: 1px solid rgba(255, 251, 242, 0.18);
+  color: #f8f6ef;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.hero-link:hover {
+  background: rgba(255, 251, 242, 0.2);
+  border-color: rgba(255, 251, 242, 0.28);
+  transform: translateY(-1px);
+}
+
 .hero-meta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

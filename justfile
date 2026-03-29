@@ -58,5 +58,5 @@ clean:
 
 [group('Serve')]
 serve port="8000":
-  @echo "Ontology browser: http://localhost:{{port}}/app/"
+  @echo "Ontology browser: http://localhost:{{port}}/"
   {{python}} -m http.server {{port}}
