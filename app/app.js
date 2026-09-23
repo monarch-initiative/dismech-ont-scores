@@ -70,7 +70,7 @@ class OntologyScoresApp {
 
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = path;
+      script.src = `${path}?v=${encodeURIComponent(window.CONCEPT_RELEASE || "")}`;
       script.async = false;
       script.onload = () => {
         this.loadedScripts.add(path);
@@ -220,6 +220,9 @@ class OntologyScoresApp {
     const termId = decodeURIComponent(encodedTermId);
     const term = this.termByKey.get(this.termKey(ontology, termId));
     if (!term) {
+      this.selectedTermKey = null;
+      this.renderDetail(null);
+      document.getElementById("detailPlaceholder").textContent = `No ranked associations for ${termId} in this snapshot. The annotation may be absent or outside the exported namespaces.`;
       return;
     }
     this.selectedOntology = ontology;
@@ -296,15 +299,23 @@ class OntologyScoresApp {
   async loadTermDetail(term) {
     this.selectedTermKey = this.termKey(term.ontology, term.term_id);
     this.renderCatalogue();
+    const selectedKey = this.selectedTermKey;
     const cache = window.ontologyScoresTermShards || {};
     if (!cache[this.selectedTermKey]) {
       await this.loadScript(`${DATA_ROOT}/${term.shard_path}`);
     }
-    const detail = (window.ontologyScoresTermShards || {})[this.selectedTermKey];
+    if (selectedKey !== this.selectedTermKey) return;
+    const detail = (window.ontologyScoresTermShards || {})[selectedKey];
     if (!detail) {
       throw new Error(`Term shard did not populate for ${this.selectedTermKey}`);
     }
+    if (detail.release_id !== this.manifest.release_id) throw new Error("The snapshot changed. Reload the page.");
+    if (detail.columns) {
+      detail.diseases = detail.diseases.map(row => Object.fromEntries(detail.columns.map((key, i) => [key, row[i]])));
+      delete detail.columns;
+    }
     this.renderDetail(detail);
+    window.dispatchEvent(new CustomEvent("ontologyTermSelected", { detail }));
     this.revealDetail();
   }
 
@@ -323,7 +334,8 @@ class OntologyScoresApp {
     root.classList.remove("hidden");
 
     const diseaseRows = detail.diseases.slice(0, 120).map((row) => {
-      const diseasePageUrl = this.dismechDiseaseUrl(row.source_file);
+      const diseasePageUrl = this.dismechDiseaseUrl(row.source_file, row.disorder_name);
+      const explorerUrl = ConceptCore.entityRoute(ConceptCore.diseaseId(row.source_file));
       const diseaseNameHtml = diseasePageUrl
         ? `<a class="entity-link" href="${this.escapeAttribute(diseasePageUrl)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(row.disorder_name)}</a>`
         : this.escapeHtml(row.disorder_name);
@@ -342,7 +354,7 @@ class OntologyScoresApp {
       <article class="disease-row">
         <div>
           <h3 class="disease-name">${diseaseNameHtml}</h3>
-          <div class="disease-id">${diseaseCurieHtml}${dismechPageHtml ? ` · ${dismechPageHtml}` : ""}</div>
+          <div class="disease-id">${diseaseCurieHtml} · <a href="${this.escapeAttribute(explorerUrl)}">Explore similarities and mechanisms</a>${dismechPageHtml ? ` · ${dismechPageHtml}` : ""}</div>
         </div>
         <div class="score-stack">
           <span class="score-badge">score ${row.score.toFixed(3)}</span>
@@ -432,12 +444,12 @@ class OntologyScoresApp {
     return `https://bioregistry.io/${encodeURIComponent(curie)}`;
   }
 
-  dismechDiseaseUrl(sourceFile) {
+  dismechDiseaseUrl(sourceFile, name) {
     if (!sourceFile) {
       return "";
     }
-    const slug = String(sourceFile).replace(/\.ya?ml$/i, "");
-    return `https://dismech.monarchinitiative.org/pages/disorders/${encodeURIComponent(slug)}`;
+    const slug = name.replaceAll(" ", "_").replaceAll("/", "_").replaceAll("(", "").replaceAll(")", "");
+    return `https://dismech.monarchinitiative.org/pages/disorders/${encodeURIComponent(slug)}.html`;
   }
 
   renderCurieLink(curie, label = curie) {

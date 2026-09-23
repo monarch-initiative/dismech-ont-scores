@@ -3,18 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>dismech Ontology Scores</title>
+  <title>DisMech Concept Explorer</title>
   <link rel="stylesheet" href="app/styles.css">
 </head>
 <body>
+<aside class="dismech-disclaimer" aria-label="DisMech disclaimer">
+    <p>
+        <strong>AI-curated research resource &mdash; not medical advice.</strong>
+        DisMech content is generated and maintained by AI curation agents under human
+        review, from publicly accessible literature and curated biomedical knowledge
+        resources. Nothing here is intended to inform medical diagnosis or treatment.
+        <a href="https://dismech.monarchinitiative.org/elements/disclaimer/">Read the full disclaimer</a>.
+    </p>
+    <button type="button" class="dismech-disclaimer-dismiss"
+            aria-label="Dismiss this disclaimer" title="Dismiss this disclaimer">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</aside>
+
+<script>
+    (function () {
+        var KEY = 'dismech-disclaimer-dismissed';
+        var bar = document.querySelector('.dismech-disclaimer');
+        if (!bar) { return; }
+        // sessionStorage access itself throws when storage is blocked (Safari
+        // private browsing, cookies-disabled), so every use is guarded.
+        var store = null;
+        try { store = window.sessionStorage; } catch (err) { store = null; }
+        try {
+            if (store && store.getItem(KEY) === '1') { bar.hidden = true; return; }
+        } catch (err) { /* unreadable storage: show the bar */ }
+        var button = bar.querySelector('.dismech-disclaimer-dismiss');
+        if (!button) { return; }
+        bar.classList.add('is-dismissible');
+        button.addEventListener('click', function () {
+            bar.hidden = true;
+            try { if (store) { store.setItem(KEY, '1'); } } catch (err) { /* not persisted */ }
+            // Focus would otherwise fall back to <body>, losing a keyboard
+            // reader's place. preventScroll keeps the viewport where it was.
+            var next = document.querySelector('main, h1');
+            if (next) {
+                if (!next.hasAttribute('tabindex')) { next.setAttribute('tabindex', '-1'); }
+                try { next.focus({ preventScroll: true }); } catch (err) { next.focus(); }
+            }
+        });
+    })();
+</script>
   <div class="page-shell">
     <header class="hero">
       <div class="hero-copy">
-        <p class="eyebrow">Ontology-centric disease priors</p>
-        <h1>dismech Ontology Scores</h1>
+        <p class="eyebrow">Explore curated concepts and their neighborhoods</p>
+        <h1>DisMech Concept Explorer</h1>
         <p class="hero-text">
-          Browse disease scores through ontology terms instead of starting from disorders.
-          Search CL, UBERON, GO, and HPO terms, then inspect which diseases they pull up.
+          Navigate ontology associations, disease similarities, and individual mechanisms.
+          Follow every result back to its curated source.
         </p>
         <p class="hero-links">
           <a class="hero-link" href="https://github.com/monarch-initiative/dismech-ont-scores" target="_blank" rel="noopener noreferrer">GitHub repository</a>
@@ -36,11 +78,21 @@
       </div>
     </header>
 
-    <main class="layout">
+    <section class="panel explorer-controls">
+      <label class="search-label" for="searchInput">Find a concept</label>
+      <input id="searchInput" class="search-input" type="search" placeholder="Search names, ontology terms, or identifiers">
+      <div class="view-buttons" aria-label="Concept views">
+        <button id="showOntology" aria-pressed="true">Ontology associations</button>
+        <button id="showEmbeddings" aria-pressed="false">Similarity map</button>
+      </div>
+      <p id="freshness" role="status">Loading source snapshot…</p>
+      <p class="hint">Scores use the new <a href="METHODS.md">context-v2 method</a> and are not comparable with the March 2026 snapshot.
+        Similarity suggests related text; it does not establish shared causation.
+        <a href="manifest.json">Build provenance</a> · <a href="https://github.com/monarch-initiative/dismech-ont-scores/actions">Build status</a></p>
+    </section>
+    <main class="layout" id="ontologyView">
       <aside class="sidebar">
         <section class="panel">
-          <label class="search-label" for="searchInput">Find ontology terms</label>
-          <input id="searchInput" class="search-input" type="search" placeholder="Search label or CURIE">
           <div class="ontology-pills" id="ontologyPills"></div>
           <p class="hint">
             The browser is term-first. Click a term to load its ranked diseases and provenance.
@@ -89,17 +141,40 @@
           <div class="detail-placeholder" id="detailPlaceholder">
             <p class="eyebrow">Term detail</p>
             <h2>Select an ontology term</h2>
-            <p>The right-hand panel will show the disease ranking and propagated evidence for the chosen term.</p>
+            <p>The right-hand panel will show the disease ranking and annotation provenance for the chosen term.</p>
           </div>
           <div id="termDetail" class="term-detail hidden"></div>
         </section>
       </section>
+    </main>
+    <main id="embeddingView" hidden>
+      <section class="panel">
+        <label for="spaceSelect">Representation</label>
+        <select id="spaceSelect">
+          <option value="pathophysiology">Disease mechanisms</option>
+          <option value="phenotypes">Disease phenotypes</option>
+          <option value="treatments">Disease treatments</option>
+          <option value="celltypes">Disease cells and anatomy</option>
+          <option value="mechanisms">Individual mechanisms (diseases and modules)</option>
+        </select>
+        <p id="spaceInfo"></p>
+        <p id="termFilterInfo"></p><button id="clearTermFilter" hidden>Clear term selection</button>
+        <p class="hint">The map is a 2D PCA layout. Neighbor lists use cosine similarity in the original vector space. Positions can change with each snapshot.</p>
+        <canvas id="conceptMap" aria-label="Similarity map; all points are available in the searchable list below" role="img"></canvas>
+        <p id="mapHover" aria-live="polite">Select a point or use the searchable list.</p>
+      </section>
+      <div class="explorer-columns">
+        <section class="panel"><h2>Concepts</h2><p id="conceptResultCount"></p><div id="conceptResults"></div></section>
+        <section class="panel" id="conceptDetail" aria-live="polite"></section>
+      </div>
     </main>
   </div>
 
   <script src="build/site-data/indexes/manifest.js"></script>
   <script src="build/site-data/indexes/overview.js"></script>
   <script src="build/site-data/indexes/term_index.js"></script>
+  <script src="app/explorer-core.js"></script>
   <script src="app/app.js"></script>
+  <script src="app/explorer.js"></script>
 </body>
 </html>

@@ -1,0 +1,13 @@
+[project]
+name = "dismech-concept-explorer"
+version = "0.1.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "PyYAML>=6,<7",
+  "numpy>=2,<3",
+  "scikit-learn>=1.5,<2",
+  "model2vec>=0.7,<1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "playwright>=1.50,<2"]
