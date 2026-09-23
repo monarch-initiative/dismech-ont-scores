@@ -19,6 +19,7 @@ class OntologyScoresApp {
         this.waitForGlobal("ontologyScoresOverview", "ontologyScoresOverviewReady"),
         this.waitForGlobal("ontologyScoresTermIndex", "ontologyScoresTermIndexReady"),
       ]);
+      if (manifest.release_id !== window.CONCEPT_RELEASE) throw new Error("The snapshot changed. Reload the page.");
       this.manifest = manifest;
       this.overview = overview;
       this.termIndex = termIndex;

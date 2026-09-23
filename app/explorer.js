@@ -274,7 +274,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const response = await fetch(`build/site-data/concepts.json?v=${window.CONCEPT_RELEASE || ''}`);
     if (!response.ok) throw new Error(`Concept inventory: HTTP ${response.status}`);
     const catalog = await response.json();
-    if (catalog.release_id !== window.CONCEPT_RELEASE) throw new Error('The snapshot changed. Reload the page.');
+    if (catalog.release_id !== window.CONCEPT_RELEASE || catalog.release_id !== window.ontologyScoresManifest?.release_id) throw new Error('The snapshot changed. Reload the page.');
     for (const space of Object.values(catalog.spaces)) {
       if (!space.ids) continue;
       for (const point of space.points) {
