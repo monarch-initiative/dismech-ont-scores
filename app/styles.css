@@ -755,3 +755,6 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid
             color: inherit;
             text-decoration: underline;
         }
+
+.hero h1 { font-size: clamp(2rem, 4vw, 3.5rem); max-width: none; }
+.explorer-controls a, #embeddingView a { color: var(--accent-strong); }

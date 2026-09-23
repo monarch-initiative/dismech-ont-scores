@@ -157,7 +157,9 @@ class ConceptExplorer {
     terms.className = 'concept-terms';
     for (const term of entity.terms) {
       const link = document.createElement('a');
-      link.href = `#term/${term.ontology}/${encodeURIComponent(term.id)}`;
+      const ranked = (window.ontologyScoresTermIndex || []).some(row => row.ontology === term.ontology && row.term_id === term.id);
+      link.href = ranked ? `#term/${term.ontology}/${encodeURIComponent(term.id)}` : `https://bioregistry.io/${encodeURIComponent(term.id)}`;
+      if (!ranked) link.title = 'Curated annotation; no disease ranking in this export';
       link.textContent = `${term.label || term.id} (${term.id})`;
       terms.append(link);
     }
