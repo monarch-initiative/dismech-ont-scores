@@ -157,6 +157,14 @@
           <option value="celltypes">Disease cells and anatomy</option>
           <option value="mechanisms">Individual mechanisms (diseases and modules)</option>
         </select>
+        <div class="map-controls">
+          <label>Color by <select id="colorSelect"><option value="kind">Concept type</option><option value="categories">Category (first)</option><option value="parents">Parent classification (first)</option></select></label>
+          <label>Mouse action <select id="mapAction"><option value="inspect">Inspect point</option><option value="select">Select region</option></select></label>
+          <button id="clearRegion">Clear region</button>
+          <button id="downloadSelection">Download selected concepts</button>
+        </div>
+        <p id="regionInfo" role="status">No region selected. Choose “Select region” and drag a box on the map.</p>
+        <div id="colorLegend" aria-label="Color legend"></div>
         <p id="spaceInfo"></p>
         <p id="termFilterInfo"></p><button id="clearTermFilter" hidden>Clear term selection</button>
         <p class="hint">The map is a 2D PCA layout. Neighbor lists use cosine similarity in the original vector space. Positions can change with each snapshot.</p>

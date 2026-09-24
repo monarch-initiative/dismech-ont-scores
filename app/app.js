@@ -10,6 +10,7 @@ class OntologyScoresApp {
     this.query = "";
     this.selectedTermKey = null;
     this.loadedScripts = new Set();
+    this.rankLimit = 25;
   }
 
   async init() {
@@ -324,6 +325,7 @@ class OntologyScoresApp {
     const placeholder = document.getElementById("detailPlaceholder");
     const root = document.getElementById("termDetail");
 
+    document.getElementById("ontologyView").classList.toggle("term-focused", Boolean(detail));
     if (!detail) {
       placeholder.classList.remove("hidden");
       root.classList.add("hidden");
@@ -334,7 +336,7 @@ class OntologyScoresApp {
     placeholder.classList.add("hidden");
     root.classList.remove("hidden");
 
-    const diseaseRows = detail.diseases.slice(0, 120).map((row) => {
+    const diseaseRows = detail.diseases.slice(0, this.rankLimit).map((row) => {
       const diseasePageUrl = this.dismechDiseaseUrl(row.source_file, row.disorder_name);
       const explorerUrl = ConceptCore.entityRoute(ConceptCore.diseaseId(row.source_file));
       const diseaseNameHtml = diseasePageUrl
@@ -375,6 +377,7 @@ class OntologyScoresApp {
     }).join("");
 
     root.innerHTML = `
+      <a href="#ontology">← Browse all terms</a>
       <div class="detail-header">
         <div class="detail-title">
           <p class="eyebrow">${this.escapeHtml(detail.ontology_label)}</p>
@@ -387,8 +390,16 @@ class OntologyScoresApp {
           <span class="pill">top ${detail.top_score.toFixed(3)}</span>
         </div>
       </div>
+      <label for="rankLimit">Show ranked diseases</label>
+      <select id="rankLimit"><option value="10">Top 10</option><option value="25">Top 25</option><option value="50">Top 50</option><option value="100">Top 100</option><option value="100000">All</option></select>
+      <p>Showing ${Math.min(this.rankLimit, detail.diseases.length)} of ${detail.diseases.length} scored associations in this snapshot. Diseases without annotation support are not ranked.</p>
       <div class="disease-list">${diseaseRows}</div>
     `;
+    document.getElementById('rankLimit').value = String(this.rankLimit);
+    document.getElementById('rankLimit').addEventListener('change', event => {
+      this.rankLimit = Number(event.target.value);
+      this.renderDetail(detail);
+    });
   }
 
   revealDetail() {

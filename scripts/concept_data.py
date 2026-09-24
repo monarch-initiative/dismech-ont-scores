@@ -153,6 +153,7 @@ def inventory(root: Path):
                       "source_file": relative, "source_hash": source_files[relative],
                       "mondo": (doc.get("disease_term") or {}).get("term", {}).get("id", ""),
                       "page_url": f"https://dismech.monarchinitiative.org/pages/{folder}/{quote(page_slug, safe="")}.html",
+                      "categories": doc.get("categories") or [], "parents": doc.get("parents") or [],
                       "terms": [], "nodes": [], "spaces": {}}
             entities[key] = entity
             nodes = doc.get("pathophysiology") or []

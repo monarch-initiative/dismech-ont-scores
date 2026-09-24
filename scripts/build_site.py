@@ -182,7 +182,7 @@ def build(source, output, cache, ontology_dir=None, encode=None, config=None):
             parent = entity.get('parent', key)
             detail_path = 'entities/' + digest(parent.encode())[:20] + '.json'
             details[detail_path][key] = entity
-            compact_entities[key] = {k: entity[k] for k in ('id', 'kind', 'name', 'parent', 'mondo', 'terms', 'nodes') if k in entity}
+            compact_entities[key] = {k: entity[k] for k in ('id', 'kind', 'name', 'parent', 'mondo', 'terms', 'nodes', 'categories', 'parents') if k in entity}
             compact_entities[key]['spaces'] = dict.fromkeys(entity['spaces'], True)
             compact_entities[key]['detail_path'] = detail_path
         for path, payload in details.items():

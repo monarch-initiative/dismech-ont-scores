@@ -16,6 +16,8 @@ def make_source(tmp_path):
     for directory in ('disorders', 'modules'):
         (root / 'kb' / directory).mkdir(parents=True)
     (root / 'kb/disorders/A.yaml').write_text('''name: Disease A
+categories: [Test category]
+parents: [Test parent]
 pathophysiology:
 - name: Injury
   description: damaged cells

@@ -9,6 +9,25 @@ class ConceptExplorer {
     this.query = '';
     this.termFilter = null;
     this.positions = [];
+    this.region = null;
+    this.colorBy = 'kind';
+    this.hiddenGroups = new Set();
+    document.getElementById('colorSelect').addEventListener('change', event => {
+      this.colorBy = event.target.value;
+      this.hiddenGroups.clear();
+      this.render();
+    });
+    document.getElementById('clearRegion').addEventListener('click', () => {
+      this.region = null;
+      this.render();
+    });
+    document.getElementById('downloadSelection').addEventListener('click', () => {
+      const rows = this.catalog.spaces[this.space].points.filter(p => this.filtered(this.entities[p.id]));
+      const csv = ['id,name,group', ...rows.map(p => [p.id, this.entities[p.id].name, this.group(this.entities[p.id])].map(v => '"' + v.replaceAll('"', '""') + '"').join(','))].join('\n');
+      const url = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+      const a = document.createElement('a'); a.href = url; a.download = 'selected-concepts.csv'; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
     this.maps = Object.fromEntries(Object.entries(catalog.spaces).map(([name, space]) => [name, new Map(space.points.map(p => [p.id, p]))]));
     document.getElementById('searchInput').addEventListener('input', event => {
       this.query = event.target.value;
@@ -17,6 +36,7 @@ class ConceptExplorer {
     });
     document.getElementById('spaceSelect').addEventListener('change', event => {
       this.space = event.target.value;
+      this.region = null;
       if (this.selected) location.hash = ConceptCore.entityRoute(this.selected, this.space);
       this.render();
     });
@@ -37,6 +57,7 @@ class ConceptExplorer {
     window.addEventListener('resize', () => this.draw());
     const canvas = document.getElementById('conceptMap');
     canvas.addEventListener('click', event => {
+      if (document.getElementById('mapAction').value === 'select') return;
       const point = this.nearestPoint(event);
       if (point) location.hash = ConceptCore.entityRoute(point.id, this.space);
     });
@@ -45,6 +66,30 @@ class ConceptExplorer {
       document.getElementById('mapHover').textContent = point ? this.entities[point.id].name : 'Select a point or use the searchable list.';
       canvas.style.cursor = point ? 'pointer' : 'default';
     });
+    const coords = event => {
+      const rect = canvas.getBoundingClientRect();
+      return {x: event.clientX - rect.left, y: event.clientY - rect.top};
+    };
+    canvas.addEventListener('pointerdown', event => {
+      if (document.getElementById('mapAction').value !== 'select') return;
+      this.dragStart = coords(event);
+      canvas.setPointerCapture(event.pointerId);
+    });
+    canvas.addEventListener('pointermove', event => {
+      if (!this.dragStart) return;
+      this.draw();
+      const end = coords(event), ctx = canvas.getContext('2d');
+      ctx.strokeStyle = '#b85c38'; ctx.lineWidth = 2;
+      ctx.strokeRect(this.dragStart.x, this.dragStart.y, end.x - this.dragStart.x, end.y - this.dragStart.y);
+    });
+    canvas.addEventListener('pointerup', event => {
+      if (!this.dragStart) return;
+      const start = this.dragStart, end = coords(event);
+      this.region = new Set(this.positions.filter(p => p.x >= Math.min(start.x,end.x) && p.x <= Math.max(start.x,end.x) && p.y >= Math.min(start.y,end.y) && p.y <= Math.max(start.y,end.y)).map(p => p.id));
+      this.dragStart = null;
+      this.render();
+    });
+    canvas.addEventListener('pointercancel', () => { this.dragStart = null; this.draw(); });
     this.route();
     const params = new URLSearchParams(location.search);
     if (!location.hash && (params.has('focus') || params.has('space'))) {
@@ -73,8 +118,10 @@ class ConceptExplorer {
     const route = ConceptCore.parseRoute(location.hash);
     if (route.type === 'concept') {
       this.selected = route.id;
+      const oldSpace = this.space;
       this.space = this.catalog.spaces[route.space] ? route.space : 'pathophysiology';
       if (this.entities[this.selected]?.kind === 'mechanism') this.space = 'mechanisms';
+      if (oldSpace !== this.space) this.region = null;
       this.show(true);
       this.render();
     } else if (route.type === 'term' || route.type === 'ontology') {
@@ -83,7 +130,23 @@ class ConceptExplorer {
   }
   filtered(entity) {
     const disease = entity.parent || entity.id;
-    return ConceptCore.matches(entity, this.query) && (!this.termFilter || this.termFilter.ids.has(disease));
+    return (!this.region || this.region.has(entity.id)) && !this.hiddenGroups.has(this.group(entity)) && ConceptCore.matches(entity, this.query) && (!this.termFilter || this.termFilter.ids.has(disease));
+  }
+  group(entity) {
+    const parent = this.entities[entity.parent] || entity;
+    return this.colorBy === 'kind' ? entity.kind : String(parent[this.colorBy]?.[0] || 'Unclassified');
+  }
+  renderLegend() {
+    const groups = [...new Set(this.catalog.spaces[this.space].points.map(p => this.group(this.entities[p.id])))].sort();
+    this.colors = new Map(groups.map((group, i) => [group, `hsl(${(i * 137.508) % 360} 60% 38%)`]));
+    const root = document.getElementById('colorLegend'); root.replaceChildren();
+    for (const group of groups) {
+      const label = document.createElement('label');
+      const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.checked = !this.hiddenGroups.has(group);
+      checkbox.addEventListener('change', () => { checkbox.checked ? this.hiddenGroups.delete(group) : this.hiddenGroups.add(group); this.renderResults(); this.draw(); });
+      const swatch = document.createElement('span'); swatch.className = 'swatch'; swatch.style.background = this.colors.get(group);
+      label.append(checkbox, swatch, document.createTextNode(group)); root.append(label);
+    }
   }
   link(id, text, space = this.space) {
     const anchor = document.createElement('a');
@@ -97,6 +160,7 @@ class ConceptExplorer {
     document.getElementById('spaceInfo').textContent = `${space.points.length.toLocaleString()} represented · ${space.excluded.length} excluded · ${space.projection || 'No projection'} · ${space.model}`;
     document.getElementById('termFilterInfo').textContent = this.termFilter ? `Selected term: ${this.termFilter.label} (${this.termFilter.id}). Showing its associated diseases and their mechanisms.` : 'All concepts in this representation';
     document.getElementById('clearTermFilter').hidden = !this.termFilter;
+    this.renderLegend();
     this.renderResults();
     this.renderDetail();
     this.draw();
@@ -104,6 +168,8 @@ class ConceptExplorer {
   renderResults() {
     const root = document.getElementById('conceptResults');
     root.replaceChildren();
+    document.getElementById('regionInfo').textContent = this.region ? `${this.region.size} points in selected region. Search and color filters further restrict the list and download.` : 'No region selected. Choose “Select region” and drag a box on the map.';
+    document.getElementById('clearRegion').disabled = !this.region;
     // Include excluded entities so missing representations remain discoverable.
     const candidates = Object.values(this.entities).filter(e => this.space in e.spaces && this.filtered(e));
     document.getElementById('conceptResultCount').textContent = `${candidates.length.toLocaleString()} matches (first 100 shown)`;
@@ -247,7 +313,7 @@ class ConceptExplorer {
       x: 15 + (point.xy[0] - xmin) / (xmax - xmin || 1) * (width - 30),
       y: 15 + (point.xy[1] - ymin) / (ymax - ymin || 1) * (height - 30)}));
     for (const p of this.positions) {
-      ctx.fillStyle = this.filtered(this.entities[p.id]) ? 'rgba(14,109,99,0.48)' : 'rgba(130,130,130,0.07)';
+      ctx.fillStyle = this.filtered(this.entities[p.id]) ? (this.colors?.get(this.group(this.entities[p.id])) || '#0e6d63') : 'rgba(130,130,130,0.07)';
       ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, 2 * Math.PI); ctx.fill();
     }
     const selected = this.positions.find(p => p.id === this.selected);

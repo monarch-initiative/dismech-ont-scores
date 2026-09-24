@@ -758,3 +758,16 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid
 
 .hero h1 { font-size: clamp(2rem, 4vw, 3.5rem); max-width: none; }
 .explorer-controls a, #embeddingView a { color: var(--accent-strong); }
+
+/* A term permalink is a detail page, with the catalogue one click away. */
+#ontologyView.term-focused { display: block; }
+#ontologyView.term-focused > .sidebar,
+#ontologyView.term-focused > .content > .panel:first-child { display: none; }
+#ontologyView.term-focused .content { display: block; }
+#ontologyView.term-focused #detailPanel { width: 100%; position: static; max-height: none; }
+.map-controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 16px; }
+.map-controls select, .map-controls button, #rankLimit { padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); }
+#colorLegend { display: flex; flex-wrap: wrap; gap: 10px; max-height: 140px; overflow: auto; margin: 12px 0; }
+#colorLegend label { cursor: pointer; }
+#colorLegend .swatch { display: inline-block; width: 12px; height: 12px; margin: 0 5px; border-radius: 50%; }
+#conceptMap { touch-action: none; }

@@ -41,6 +41,11 @@ try:
         page.goto(f"{origin}/#term/{term['ontology']}/{quote(term['term_id'], safe='')}")
         page.wait_for_function("document.getElementById('freshness').textContent.startsWith('Data built')")
         page.locator('#termDetail .disease-row').first.wait_for()
+        assert page.locator('#detailPanel').bounding_box()['width'] > 1200
+        page.locator('#rankLimit').select_option('10')
+        assert page.locator('#termDetail .disease-row').count() == min(10, len(detail['diseases']))
+        page.locator('#rankLimit').select_option('100000')
+        assert page.locator('#termDetail .disease-row').count() == len(detail['diseases'])
         page.locator(f'#termDetail a[href*="{quote(disease["id"], safe="")}"]').first.click()
         page.locator('#conceptDetail h2').wait_for()
         assert page.locator('#conceptDetail h2').inner_text() == disease['name']
@@ -51,6 +56,28 @@ try:
         assert page.locator('#conceptDetail a', has_text='Open curated entry').count() == 1
         page.go_back()
         page.wait_for_function("document.getElementById('spaceSelect').value === 'pathophysiology'")
+        page.locator('#clearTermFilter').click()
+        page.locator('#colorSelect').select_option('categories')
+        assert page.locator('#colorLegend input').count() > 0
+        if disease.get('categories'):
+            assert disease['categories'][0] in page.locator('#colorLegend').inner_text()
+        page.locator('#mapAction').select_option('select')
+        page.locator('#conceptMap').scroll_into_view_if_needed()
+        box = page.locator('#conceptMap').bounding_box()
+        page.mouse.move(box['x'] + 10, box['y'] + 10)
+        page.mouse.down()
+        page.mouse.move(box['x'] + box['width'] - 10, box['y'] + box['height'] - 10, steps=5)
+        page.mouse.up()
+        assert 'points in selected region' in page.locator('#regionInfo').inner_text()
+        with page.expect_download() as download:
+            page.locator('#downloadSelection').click()
+        assert download.value.suggested_filename == 'selected-concepts.csv'
+        assert 'id,name,group' in Path(download.value.path()).read_text()
+        page.locator('#clearRegion').click()
+        assert page.locator('#clearRegion').is_disabled()
+        page.locator('#colorLegend input').first.uncheck()
+        assert not page.locator('#colorLegend input').first.is_checked()
+        page.locator('#colorLegend input').first.check()
         page.screenshot(path='/tmp/concept-explorer-desktop.png', full_page=True)
         page.set_viewport_size({'width': 390, 'height': 844})
         page.screenshot(path='/tmp/concept-explorer-mobile.png', full_page=True)

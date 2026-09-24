@@ -12,6 +12,19 @@ Search a term, inspect its ranked diseases and annotation provenance, and follow
 to compare it with nodes from other diseases and modules. Ontology selection
 filters the map; **Clear term selection** returns to the whole space. Neighbors
 use full-vector cosine similarity; the map is a separate 2D PCA projection.
+Term permalinks open a full-width ranking with Top 10/25/50/100 or All controls.
+The displayed count is the number of supported associations, not an arbitrary
+minimum: a term can legitimately have only one scored disease.
+
+In the map, choose **Select region** and drag a box to restrict the concept list
+and CSV download. **Clear region** restores the full map. Color by concept type,
+first curated category, or first parent classification; legend checkboxes filter
+groups. Mechanisms inherit category/parent metadata from their disease or module.
+Unclassified records stay visible. Region selection resets when representations
+change. Search, term, region, and legend filters combine.
+
+The map is intended to succeed the legacy embeddings browser, but currently has
+PCA only; it does not yet reproduce the legacy UMAP/t-SNE projection choices.
 
 This browser is a downstream derived view. Disease/module curation remains in
 DisMech. Source YAML is never copied into this repository's tracked files.
