@@ -166,9 +166,6 @@
           <label for="mapAction">Mouse action</label>
           <select id="mapAction"><option value="zoom">Zoom into region</option><option value="pan">Pan</option><option value="select">Select points</option><option value="lasso">Lasso points</option></select>
           <div class="map-controls"><button id="resetZoom">Reset zoom</button><button id="focusZoom">Focus neighborhood</button><button id="clearRegion">Clear selection</button><button id="downloadSelection">Download selected concepts</button></div>
-          <h3>Filter by color</h3>
-          <div class="map-controls"><button id="colorsAll">All</button><button id="colorsNone">None</button></div>
-          <div id="colorLegend" aria-label="Color legend"></div>
           <p id="regionInfo" role="status"></p>
           <p id="spaceInfo"></p>
           <p id="termFilterInfo"></p><button id="clearTermFilter" hidden>Clear term selection</button>
@@ -176,7 +173,15 @@
         <section class="panel embedding-plot">
           <h2>Interactive embedding map</h2>
           <p class="hint">Drag a box to zoom; double-click to reset. Use the toolbar to pan, select points, or save an image. Click a point to inspect its curated entry below.</p>
-          <div id="conceptMap" aria-label="Interactive similarity map; all points are available in the searchable list below"></div>
+          <div class="plot-with-key">
+            <div id="conceptMap" aria-label="Interactive similarity map; all points are available in the searchable list below"></div>
+            <aside class="map-key" aria-labelledby="colorLegendTitle">
+              <h3 id="colorLegendTitle">Color key</h3>
+              <p class="hint">Counts in this representation. Uncheck a group to hide it.</p>
+              <div class="map-controls"><button id="colorsAll">All</button><button id="colorsNone">None</button></div>
+              <div id="colorLegend" aria-label="Color legend"></div>
+            </aside>
+          </div>
           <p class="hint">Projection distances are an approximation. Neighbor lists use cosine similarity in the original vector space.</p>
         </section>
       </div>

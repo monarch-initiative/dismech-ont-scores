@@ -784,3 +784,15 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid
 .map-active .hero h1 { font-size: 1.8rem; margin: 0; }
 .map-active .hero .eyebrow, .map-active .hero-text, .map-active .hero-links, .map-active .hero-meta { display: none; }
 .map-active .explorer-controls { padding: 14px 22px; }
+
+.plot-with-key { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 16px; align-items: start; }
+.map-key { min-width: 0; border-left: 1px solid var(--line); padding-left: 14px; }
+.map-key h3 { margin: 0 0 10px; }
+.map-key #colorLegend { display: flex; flex-direction: column; flex-wrap: nowrap; max-height: 490px; }
+.map-key #colorLegend label { display: flex; align-items: baseline; gap: 4px; overflow-wrap: anywhere; }
+.map-key #colorLegend .swatch { flex: 0 0 14px; width: 14px; height: 14px; }
+@media (max-width: 1100px) {
+  .plot-with-key { grid-template-columns: 1fr; }
+  .map-key { border-left: 0; border-top: 1px solid var(--line); padding: 14px 0 0; }
+  .map-key #colorLegend { max-height: 240px; }
+}

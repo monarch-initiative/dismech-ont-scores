@@ -119,7 +119,13 @@ class ConceptExplorer {
     return this.colorBy === 'kind' ? entity.kind : String(parent[this.colorBy]?.[0] || 'Unclassified');
   }
   renderLegend() {
-    const groups = [...new Set(this.catalog.spaces[this.space].points.map(p => this.group(this.entities[p.id])))].sort();
+    const counts = new Map();
+    for (const point of this.catalog.spaces[this.space].points) {
+      const group = this.group(this.entities[point.id]);
+      counts.set(group, (counts.get(group) || 0) + 1);
+    }
+    const groups = [...counts.keys()].sort();
+    document.getElementById('colorLegendTitle').textContent = `Color key — ${document.getElementById('colorSelect').selectedOptions[0].textContent}`;
     this.colors = new Map(groups.map((group, i) => [group, `hsl(${(i * 137.508) % 360}, 60%, 38%)`]));
     const root = document.getElementById('colorLegend'); root.replaceChildren();
     for (const group of groups) {
@@ -127,7 +133,8 @@ class ConceptExplorer {
       const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.checked = !this.hiddenGroups.has(group);
       checkbox.addEventListener('change', () => { checkbox.checked ? this.hiddenGroups.delete(group) : this.hiddenGroups.add(group); this.renderResults(); this.draw(); });
       const swatch = document.createElement('span'); swatch.className = 'swatch'; swatch.style.background = this.colors.get(group);
-      label.append(checkbox, swatch, document.createTextNode(group)); root.append(label);
+      const name = document.createElement('span'); name.textContent = `${group} (${counts.get(group).toLocaleString()})`;
+      label.append(checkbox, swatch, name); root.append(label);
     }
   }
   link(id, text, space = this.space) {
