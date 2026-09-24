@@ -211,6 +211,7 @@ class OntologyScoresApp {
   restoreFromHash() {
     const hash = window.location.hash.replace(/^#/, "");
     if (!hash.startsWith("term/")) {
+      if (hash === "ontology") { this.selectedOntology = "all"; this.renderCatalogue(); }
       this.selectedTermKey = null;
       this.renderDetail(null);
       return;
@@ -242,6 +243,8 @@ class OntologyScoresApp {
     this.renderOntologySummary(facetCounts);
 
     const results = this.filteredTerms().sort((left, right) => {
+      const exact = term => this.query && [term.term_id, term.term_label].some(value => value.toLowerCase() === this.query);
+      if (exact(left) !== exact(right)) return exact(left) ? -1 : 1;
       if (left.ontology !== right.ontology) {
         return left.ontology.localeCompare(right.ontology);
       }

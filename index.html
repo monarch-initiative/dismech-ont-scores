@@ -86,7 +86,7 @@
         <button id="showEmbeddings" aria-pressed="false">Similarity map</button>
       </div>
       <p id="freshness" role="status">Loading source snapshot…</p>
-      <p class="hint">Scores use the new <a href="METHODS.md">context-v2 method</a> and are not comparable with the March 2026 snapshot.
+      <p class="hint">Scores use the new <a href="METHODS.md">context-v2.1 method</a> and are not comparable with the March 2026 snapshot.
         Similarity suggests related text; it does not establish shared causation.
         <a href="manifest.json">Build provenance</a> · <a href="https://github.com/monarch-initiative/dismech-ont-scores/actions">Build status</a></p>
     </section>
@@ -148,29 +148,38 @@
       </section>
     </main>
     <main id="embeddingView" hidden>
-      <section class="panel">
-        <label for="spaceSelect">Representation</label>
-        <select id="spaceSelect">
-          <option value="pathophysiology">Disease mechanisms</option>
-          <option value="phenotypes">Disease phenotypes</option>
-          <option value="treatments">Disease treatments</option>
-          <option value="celltypes">Disease cells and anatomy</option>
-          <option value="mechanisms">Individual mechanisms (diseases and modules)</option>
-        </select>
-        <div class="map-controls">
-          <label>Color by <select id="colorSelect"><option value="kind">Concept type</option><option value="categories">Category (first)</option><option value="parents">Parent classification (first)</option></select></label>
-          <label>Mouse action <select id="mapAction"><option value="inspect">Inspect point</option><option value="select">Select region</option></select></label>
-          <button id="clearRegion">Clear region</button>
-          <button id="downloadSelection">Download selected concepts</button>
-        </div>
-        <p id="regionInfo" role="status">No region selected. Choose “Select region” and drag a box on the map.</p>
-        <div id="colorLegend" aria-label="Color legend"></div>
-        <p id="spaceInfo"></p>
-        <p id="termFilterInfo"></p><button id="clearTermFilter" hidden>Clear term selection</button>
-        <p class="hint">The map is a 2D PCA layout. Neighbor lists use cosine similarity in the original vector space. Positions can change with each snapshot.</p>
-        <canvas id="conceptMap" aria-label="Similarity map; all points are available in the searchable list below" role="img"></canvas>
-        <p id="mapHover" aria-live="polite">Select a point or use the searchable list.</p>
-      </section>
+      <div class="embedding-layout">
+        <aside class="panel embedding-sidebar">
+          <label for="spaceSelect">Embedding space</label>
+          <select id="spaceSelect">
+            <option value="pathophysiology">Pathophysiology</option>
+            <option value="phenotypes">Phenotypes</option>
+            <option value="treatments">Treatments</option>
+            <option value="celltypes">Cells and anatomy</option>
+            <option value="mechanisms">Individual mechanisms</option>
+          </select>
+          <label for="projectionSelect">Reduction method</label>
+          <select id="projectionSelect"><option value="umap">UMAP</option><option value="tsne">t-SNE</option><option value="pca">PCA</option></select>
+          <label for="colorSelect">Color by</label>
+          <select id="colorSelect"><option value="categories">Category (first)</option><option value="parents">Parent classification (first)</option><option value="kind">Concept type</option></select>
+          <label><input type="checkbox" id="showLabels"> Show disease / mechanism names</label>
+          <label for="mapAction">Mouse action</label>
+          <select id="mapAction"><option value="zoom">Zoom into region</option><option value="pan">Pan</option><option value="select">Select points</option><option value="lasso">Lasso points</option></select>
+          <div class="map-controls"><button id="resetZoom">Reset zoom</button><button id="focusZoom">Focus neighborhood</button><button id="clearRegion">Clear selection</button><button id="downloadSelection">Download selected concepts</button></div>
+          <h3>Filter by color</h3>
+          <div class="map-controls"><button id="colorsAll">All</button><button id="colorsNone">None</button></div>
+          <div id="colorLegend" aria-label="Color legend"></div>
+          <p id="regionInfo" role="status"></p>
+          <p id="spaceInfo"></p>
+          <p id="termFilterInfo"></p><button id="clearTermFilter" hidden>Clear term selection</button>
+        </aside>
+        <section class="panel embedding-plot">
+          <h2>Interactive embedding map</h2>
+          <p class="hint">Drag a box to zoom; double-click to reset. Use the toolbar to pan, select points, or save an image. Click a point to inspect its curated entry below.</p>
+          <div id="conceptMap" aria-label="Interactive similarity map; all points are available in the searchable list below"></div>
+          <p class="hint">Projection distances are an approximation. Neighbor lists use cosine similarity in the original vector space.</p>
+        </section>
+      </div>
       <div class="explorer-columns">
         <section class="panel"><h2>Concepts</h2><p id="conceptResultCount"></p><div id="conceptResults"></div></section>
         <section class="panel" id="conceptDetail" aria-live="polite"></section>
@@ -181,6 +190,7 @@
   <script src="build/site-data/indexes/manifest.js"></script>
   <script src="build/site-data/indexes/overview.js"></script>
   <script src="build/site-data/indexes/term_index.js"></script>
+  <script src="app/vendor/plotly-2.27.0.min.js"></script>
   <script src="app/explorer-core.js"></script>
   <script src="app/app.js"></script>
   <script src="app/explorer.js"></script>

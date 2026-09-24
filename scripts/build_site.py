@@ -96,6 +96,10 @@ def validate(site):
         for point in points:
             if len(point['xy']) != 2 or not all(isinstance(v, (int, float)) and abs(v) < float('inf') for v in point['xy']):
                 raise ValueError(f'Invalid coordinates: {point["id"]}')
+            for method in space.get('projection_methods', []):
+                xy = point.get('projections', {}).get(method, [])
+                if len(xy) != 2 or not all(isinstance(v, (int, float)) and abs(v) < float('inf') for v in xy):
+                    raise ValueError(f'Invalid {method} coordinates: {point["id"]}')
             for neighbor in point['neighbors']:
                 if neighbor['id'] not in ids or neighbor['id'] == point['id'] or not -1.00001 <= neighbor['cosine'] <= 1.00001:
                     raise ValueError(f'Invalid neighbor: {neighbor}')

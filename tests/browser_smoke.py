@@ -57,24 +57,45 @@ try:
         page.go_back()
         page.wait_for_function("document.getElementById('spaceSelect').value === 'pathophysiology'")
         page.locator('#clearTermFilter').click()
+        for method in catalog['spaces']['pathophysiology'].get('projection_methods', ['pca']):
+            page.locator('#projectionSelect').select_option(method)
+            page.wait_for_function("method => document.getElementById('conceptMap')._fullLayout.xaxis.title.text === method.toUpperCase() + ' 1'", arg=method)
+        page.locator('#colorsNone').click()
+        assert page.locator('#colorLegend input:checked').count() == 0
+        page.locator('#colorsAll').click()
+        assert page.locator('#colorLegend input:checked').count() > 0
         page.locator('#colorSelect').select_option('categories')
         assert page.locator('#colorLegend input').count() > 0
         if disease.get('categories'):
             assert disease['categories'][0] in page.locator('#colorLegend').inner_text()
+        page.locator('#conceptMap .nsewdrag').wait_for()
+        page.locator('#mapAction').select_option('zoom')
+        page.locator('#conceptMap').scroll_into_view_if_needed()
+        before = page.evaluate("document.getElementById('conceptMap')._fullLayout.xaxis.range.slice()")
+        box = page.locator('#conceptMap .nsewdrag').bounding_box()
+        page.mouse.move(box['x'] + box['width'] * .2, box['y'] + box['height'] * .2)
+        page.mouse.down()
+        page.mouse.move(box['x'] + box['width'] * .7, box['y'] + box['height'] * .7, steps=5)
+        page.mouse.up()
+        page.wait_for_function("before => { const r = document.getElementById('conceptMap')._fullLayout.xaxis.range; return r[1]-r[0] < before[1]-before[0]; }", arg=before)
+        page.locator('#resetZoom').click()
+        page.wait_for_function("document.getElementById('conceptMap')._fullLayout.xaxis.autorange")
+        page.locator('#showLabels').check()
+        assert page.evaluate("document.getElementById('conceptMap').data[0].mode.includes('text')")
         page.locator('#mapAction').select_option('select')
         page.locator('#conceptMap').scroll_into_view_if_needed()
-        box = page.locator('#conceptMap').bounding_box()
-        page.mouse.move(box['x'] + 10, box['y'] + 10)
+        box = page.locator('#conceptMap .nsewdrag').bounding_box()
+        page.mouse.move(box['x'] + 2, box['y'] + 2)
         page.mouse.down()
-        page.mouse.move(box['x'] + box['width'] - 10, box['y'] + box['height'] - 10, steps=5)
+        page.mouse.move(box['x'] + box['width'] - 2, box['y'] + box['height'] - 2, steps=5)
         page.mouse.up()
-        assert 'points in selected region' in page.locator('#regionInfo').inner_text()
+        page.wait_for_function("document.getElementById('regionInfo').textContent.includes('points selected')")
         with page.expect_download() as download:
             page.locator('#downloadSelection').click()
         assert download.value.suggested_filename == 'selected-concepts.csv'
         assert 'id,name,group' in Path(download.value.path()).read_text()
         page.locator('#clearRegion').click()
-        assert page.locator('#clearRegion').is_disabled()
+        page.wait_for_function("document.getElementById('clearRegion').disabled")
         page.locator('#colorLegend input').first.uncheck()
         assert not page.locator('#colorLegend input').first.is_checked()
         page.locator('#colorLegend input').first.check()
@@ -88,6 +109,12 @@ try:
         assert page.locator('#spaceSelect').input_value() == 'phenotypes'
         page.goto(f'{origin}/#concept/does-not-exist/pathophysiology')
         page.wait_for_function("document.getElementById('conceptDetail').textContent.includes('absent from this snapshot')")
+        page.goto(f'{origin}/#ontology')
+        page.locator('#searchInput').fill('peroxisome')
+        page.wait_for_function("document.querySelector('#termResults button')?.textContent.includes('GO:0005777')")
+        page.locator('#termResults button').first.click()
+        page.wait_for_function("document.querySelector('#termDetail h2')?.textContent === 'peroxisome'")
+        assert page.locator('#termDetail .disease-row').count() > 0
         assert not errors, errors
         browser.close()
 finally:

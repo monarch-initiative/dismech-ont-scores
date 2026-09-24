@@ -10,7 +10,9 @@ class ConceptExplorer {
     this.termFilter = null;
     this.positions = [];
     this.region = null;
-    this.colorBy = 'kind';
+    this.colorBy = 'categories';
+    this.projection = 'umap';
+    this.plotRevision = 0;
     this.hiddenGroups = new Set();
     document.getElementById('colorSelect').addEventListener('change', event => {
       this.colorBy = event.target.value;
@@ -36,6 +38,7 @@ class ConceptExplorer {
     });
     document.getElementById('spaceSelect').addEventListener('change', event => {
       this.space = event.target.value;
+      this.plotRevision++;
       this.region = null;
       if (this.selected) location.hash = ConceptCore.entityRoute(this.selected, this.space);
       this.render();
@@ -54,42 +57,20 @@ class ConceptExplorer {
                          ids: new Set(event.detail.diseases.map(r => ConceptCore.diseaseId(r.source_file)))};
       this.render();
     });
-    window.addEventListener('resize', () => this.draw());
-    const canvas = document.getElementById('conceptMap');
-    canvas.addEventListener('click', event => {
-      if (document.getElementById('mapAction').value === 'select') return;
-      const point = this.nearestPoint(event);
-      if (point) location.hash = ConceptCore.entityRoute(point.id, this.space);
+    document.getElementById('projectionSelect').addEventListener('change', event => {
+      this.projection = event.target.value; this.region = null; this.plotRevision++; this.render();
     });
-    canvas.addEventListener('mousemove', event => {
-      const point = this.nearestPoint(event);
-      document.getElementById('mapHover').textContent = point ? this.entities[point.id].name : 'Select a point or use the searchable list.';
-      canvas.style.cursor = point ? 'pointer' : 'default';
+    document.getElementById('showLabels').addEventListener('change', () => this.draw());
+    document.getElementById('mapAction').addEventListener('change', () => this.draw());
+    document.getElementById('resetZoom').addEventListener('click', () => {
+      Plotly.relayout('conceptMap', {'xaxis.autorange': true, 'yaxis.autorange': true});
     });
-    const coords = event => {
-      const rect = canvas.getBoundingClientRect();
-      return {x: event.clientX - rect.left, y: event.clientY - rect.top};
-    };
-    canvas.addEventListener('pointerdown', event => {
-      if (document.getElementById('mapAction').value !== 'select') return;
-      this.dragStart = coords(event);
-      canvas.setPointerCapture(event.pointerId);
-    });
-    canvas.addEventListener('pointermove', event => {
-      if (!this.dragStart) return;
-      this.draw();
-      const end = coords(event), ctx = canvas.getContext('2d');
-      ctx.strokeStyle = '#b85c38'; ctx.lineWidth = 2;
-      ctx.strokeRect(this.dragStart.x, this.dragStart.y, end.x - this.dragStart.x, end.y - this.dragStart.y);
-    });
-    canvas.addEventListener('pointerup', event => {
-      if (!this.dragStart) return;
-      const start = this.dragStart, end = coords(event);
-      this.region = new Set(this.positions.filter(p => p.x >= Math.min(start.x,end.x) && p.x <= Math.max(start.x,end.x) && p.y >= Math.min(start.y,end.y) && p.y <= Math.max(start.y,end.y)).map(p => p.id));
-      this.dragStart = null;
-      this.render();
-    });
-    canvas.addEventListener('pointercancel', () => { this.dragStart = null; this.draw(); });
+    document.getElementById('focusZoom').addEventListener('click', () => this.focusNeighborhood());
+    for (const [id, hide] of [['colorsAll', false], ['colorsNone', true]]) {
+      document.getElementById(id).addEventListener('click', () => {
+        this.hiddenGroups = hide ? new Set(this.colors.keys()) : new Set(); this.render();
+      });
+    }
     this.route();
     const params = new URLSearchParams(location.search);
     if (!location.hash && (params.has('focus') || params.has('space'))) {
@@ -108,6 +89,7 @@ class ConceptExplorer {
     }
   }
   show(embeddings) {
+    document.body.classList.toggle('map-active', embeddings);
     document.getElementById('ontologyView').hidden = embeddings;
     document.getElementById('embeddingView').hidden = !embeddings;
     document.getElementById('showOntology').setAttribute('aria-pressed', String(!embeddings));
@@ -121,7 +103,7 @@ class ConceptExplorer {
       const oldSpace = this.space;
       this.space = this.catalog.spaces[route.space] ? route.space : 'pathophysiology';
       if (this.entities[this.selected]?.kind === 'mechanism') this.space = 'mechanisms';
-      if (oldSpace !== this.space) this.region = null;
+      if (oldSpace !== this.space) { this.region = null; this.plotRevision++; }
       this.show(true);
       this.render();
     } else if (route.type === 'term' || route.type === 'ontology') {
@@ -157,7 +139,12 @@ class ConceptExplorer {
   render() {
     document.getElementById('spaceSelect').value = this.space;
     const space = this.catalog.spaces[this.space];
-    document.getElementById('spaceInfo').textContent = `${space.points.length.toLocaleString()} represented · ${space.excluded.length} excluded · ${space.projection || 'No projection'} · ${space.model}`;
+    const methods = space.projection_methods || ['pca'];
+    if (!methods.includes(this.projection)) this.projection = methods.includes('umap') ? 'umap' : 'pca';
+    for (const option of document.getElementById('projectionSelect').options) option.disabled = !methods.includes(option.value);
+    document.getElementById('projectionSelect').value = this.projection;
+    document.getElementById('focusZoom').disabled = !this.maps[this.space].has(this.selected);
+    document.getElementById('spaceInfo').textContent = `${space.points.length.toLocaleString()} represented · ${space.excluded.length} excluded · ${this.projection.toUpperCase()} · ${space.model}`;
     document.getElementById('termFilterInfo').textContent = this.termFilter ? `Selected term: ${this.termFilter.label} (${this.termFilter.id}). Showing its associated diseases and their mechanisms.` : 'All concepts in this representation';
     document.getElementById('clearTermFilter').hidden = !this.termFilter;
     this.renderLegend();
@@ -168,7 +155,7 @@ class ConceptExplorer {
   renderResults() {
     const root = document.getElementById('conceptResults');
     root.replaceChildren();
-    document.getElementById('regionInfo').textContent = this.region ? `${this.region.size} points in selected region. Search and color filters further restrict the list and download.` : 'No region selected. Choose “Select region” and drag a box on the map.';
+    document.getElementById('regionInfo').textContent = this.region ? `${this.region.size} points selected. Search and color filters further restrict the list and download.` : 'No points selected. Drag to zoom, or choose a selection tool to filter the list.';
     document.getElementById('clearRegion').disabled = !this.region;
     // Include excluded entities so missing representations remain discoverable.
     const candidates = Object.values(this.entities).filter(e => this.space in e.spaces && this.filtered(e));
@@ -293,46 +280,66 @@ class ConceptExplorer {
     details.append(summary, text);
     root.append(details);
   }
+  xy(point) { return point.projections?.[this.projection] || point.xy; }
+  focusNeighborhood() {
+    const point = this.maps[this.space].get(this.selected);
+    if (!point) return;
+    const center = this.xy(point);
+    const distances = this.catalog.spaces[this.space].points.map(p => Math.hypot(this.xy(p)[0]-center[0], this.xy(p)[1]-center[1])).sort((a,b) => a-b);
+    const radius = (distances[Math.min(15, distances.length-1)] || 1) * 1.25;
+    Plotly.relayout('conceptMap', {'xaxis.range': [center[0]-radius, center[0]+radius], 'yaxis.range': [center[1]-radius, center[1]+radius]});
+  }
   draw() {
-    const canvas = document.getElementById('conceptMap');
-    if (document.getElementById('embeddingView').hidden) return;
-    const width = canvas.clientWidth || 600, height = 400, ratio = devicePixelRatio || 1;
-    canvas.width = width * ratio;
-    canvas.height = height * ratio;
-    const ctx = canvas.getContext('2d');
-    ctx.scale(ratio, ratio);
-    ctx.clearRect(0, 0, width, height);
-    const points = this.catalog.spaces[this.space].points;
-    if (!points.length) return;
-    let xmin = Infinity, xmax = -Infinity, ymin = Infinity, ymax = -Infinity;
-    for (const p of points) {
-      xmin = Math.min(xmin, p.xy[0]); xmax = Math.max(xmax, p.xy[0]);
-      ymin = Math.min(ymin, p.xy[1]); ymax = Math.max(ymax, p.xy[1]);
+    if (document.getElementById('embeddingView').hidden || !this.colors) return;
+    const plot = document.getElementById('conceptMap');
+    const labels = document.getElementById('showLabels').checked;
+    const groups = new Map();
+    const escape = value => String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    for (const point of this.catalog.spaces[this.space].points) {
+      const entity = this.entities[point.id];
+      // Selection filters the list/export, but leaves the plot available for a new selection.
+      const region = this.region; this.region = null;
+      const visible = this.filtered(entity); this.region = region;
+      if (!visible) continue;
+      const group = this.group(entity);
+      if (!groups.has(group)) groups.set(group, {x: [], y: [], customdata: [], text: [], hovertext: []});
+      const trace = groups.get(group), xy = this.xy(point);
+      trace.x.push(xy[0]); trace.y.push(xy[1]); trace.customdata.push(point.id);
+      trace.text.push(escape(entity.name)); trace.hovertext.push(`${escape(entity.name)}<br>${escape(group)}`);
     }
-    this.positions = points.map(point => ({id: point.id,
-      x: 15 + (point.xy[0] - xmin) / (xmax - xmin || 1) * (width - 30),
-      y: 15 + (point.xy[1] - ymin) / (ymax - ymin || 1) * (height - 30)}));
-    for (const p of this.positions) {
-      ctx.fillStyle = this.filtered(this.entities[p.id]) ? (this.colors?.get(this.group(this.entities[p.id])) || '#0e6d63') : 'rgba(130,130,130,0.07)';
-      ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, 2 * Math.PI); ctx.fill();
-    }
-    const selected = this.positions.find(p => p.id === this.selected);
-    if (selected) {
-      ctx.strokeStyle = '#b85c38'; ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.arc(selected.x, selected.y, 7, 0, 2 * Math.PI); ctx.stroke();
+    const traces = [...groups].map(([name, data]) => ({...data, name, type: 'scattergl',
+      mode: labels ? 'markers+text' : 'markers', textposition: 'top center', textfont: {size: 10},
+      marker: {color: this.colors.get(name), size: 8, opacity: 0.8},
+      selectedpoints: this.region ? data.customdata.flatMap((id,i) => this.region.has(id) ? [i] : []) : null,
+      hovertemplate: '%{hovertext}<extra></extra>'}));
+    const selected = this.maps[this.space].get(this.selected);
+    if (selected) traces.push({x: [this.xy(selected)[0]], y: [this.xy(selected)[1]],
+      customdata: [selected.id], text: [escape(this.entities[selected.id].name)],
+      type: 'scattergl', mode: 'markers', marker: {size: 18, symbol: 'star', color: '#6d28d9'},
+      hovertemplate: '%{text}<extra>Focused</extra>', name: 'Focused'});
+    Plotly.react(plot, traces, {
+      autosize: true, height: 650, showlegend: false, hovermode: 'closest',
+      dragmode: document.getElementById('mapAction').value,
+      uirevision: `${this.space}/${this.projection}/${this.plotRevision}`,
+      xaxis: {title: this.projection.toUpperCase() + ' 1', zeroline: false},
+      yaxis: {title: this.projection.toUpperCase() + ' 2', zeroline: false},
+      margin: {l: 55, r: 20, t: 35, b: 55}, paper_bgcolor: 'rgba(0,0,0,0)',
+      font: {family: 'Georgia, serif', color: '#374151'}
+    }, {responsive: true, scrollZoom: true, displayModeBar: true, displaylogo: false});
+    if (!this.plotBound) {
+      this.plotBound = true;
+      plot.on('plotly_click', event => {
+        const id = event.points?.[0]?.customdata;
+        if (id) location.hash = ConceptCore.entityRoute(id, this.space);
+      });
+      plot.on('plotly_selected', event => {
+        if (!event || (!event.range && !event.lassoPoints)) return;
+        this.region = new Set(event.points.map(p => p.customdata)); this.renderResults();
+      });
+      plot.on('plotly_deselect', () => { this.region = null; this.renderResults(); });
     }
   }
-  nearestPoint(event) {
-    const rect = event.target.getBoundingClientRect();
-    const x = event.clientX - rect.left, y = event.clientY - rect.top;
-    let best, distance = 64;
-    for (const p of this.positions) {
-      if (!this.filtered(this.entities[p.id])) continue;
-      const d = (p.x - x) ** 2 + (p.y - y) ** 2;
-      if (d < distance) { best = p; distance = d; }
-    }
-    return best;
-  }
+
 }
 
 window.addEventListener('DOMContentLoaded', async () => {

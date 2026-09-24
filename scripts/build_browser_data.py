@@ -28,7 +28,7 @@ ONTOLOGY_META = {
         "prefix": "UBERON",
     },
     "go": {
-        "label": "Biological Processes",
+        "label": "Gene Ontology",
         "short_label": "GO",
         "description": "Curated disease annotations projected onto Gene Ontology process terms.",
         "prefix": "GO",

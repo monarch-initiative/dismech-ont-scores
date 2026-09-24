@@ -28,6 +28,8 @@ pathophysiology:
   - target: Repair
 - name: Repair
   description: repair tissue
+  cellular_components:
+  - term: {id: 'GO:0005777', label: peroxisome}
 phenotypes:
 - name: Feature
   phenotype_term:
@@ -60,6 +62,8 @@ is_a: {prefix}:TEST_PARENT ! test parent
 id: {prefix}:TEST_PARENT
 name: test parent
 ''')
+    with (root / 'go.obo').open('a') as stream:
+        stream.write('\n[Term]\nid: GO:0005777\nname: peroxisome\n\n')
     return root
 
 
@@ -150,3 +154,14 @@ def test_duplicate_yaml_fails(tmp_path):
     (source / 'kb/disorders/A.yaml').write_text('name: A\nname: B\n')
     with pytest.raises(ValueError, match='Duplicate YAML key'):
         inventory(source)
+
+
+def test_go_components_and_functions_are_exported(tmp_path):
+    root = make_source(tmp_path)
+    path = root / 'kb/disorders/A.yaml'
+    path.write_text(path.read_text().replace('  cell_types:', "  cellular_components:\n  - term: {id: 'GO:0005777', label: peroxisome}\n  molecular_functions:\n  - term: {id: 'GO:TEST_FUNCTION', label: binding}\n  cell_types:"))
+    entities, observations, _ = inventory(root)
+    assert ('go', 'disease:A', 'GO:0005777', 'Injury') in observations
+    assert ('go', 'disease:A', 'GO:TEST_FUNCTION', 'Injury') in observations
+    assert 'peroxisome' in entities['disease:A']['spaces']['celltypes']
+    assert any(t['id'] == 'GO:0005777' and t['ontology'] == 'go' for t in entities['disease:A']['terms'])

@@ -5,7 +5,7 @@ ontology ancestors; similarity of rendered text; and curated pathograph links.
 These relationships retain separate meanings. A similar vector is not a causal
 edge, an ontology equivalence, or evidence for an uncurated annotation.
 
-## Ontology scores: context-v2-max-product
+## Ontology scores: context-v2.1-max-product
 
 This is a **new method**, not a reconstruction of the March 2026 score exporter.
 That exporter is absent from the source commit named by the old payload and was
@@ -19,7 +19,7 @@ URL contract, while `manifest.json` and the visible interface identify v2.
 
 For each disease:
 
-1. Extract direct CL cell types, UBERON locations, and GO biological processes
+1. Extract direct CL cell types, UBERON locations, and GO biological processes, cellular components, and molecular functions
    from pathophysiology nodes, and HP terms from phenotype descriptors. Repeated
    annotations contribute once; node names are retained as supporting provenance.
 2. A direct association has support 1. Follow asserted child-to-parent ontology
@@ -51,7 +51,7 @@ Every ontology's data-version, source URL, predicates, and exact byte checksum a
 recorded in the release manifest. New runs download the current releases explicitly;
 `--ontology-dir` can reproduce a build using previously saved matching OBO files.
 
-## Embeddings: concept-text-v1
+## Embeddings: concept-text-v2
 
 The initial local backend is model2vec `minishlab/potion-base-8M`, pinned to
 revision `bf8b056651a2c21b8d2565580b8569da283cab23`. Model and package versions are
@@ -78,11 +78,25 @@ the rendering semantics change. Empty text and zero vectors are explicitly liste
 as excluded; a model error fails the build rather than becoming an exclusion.
 
 Neighbors use cosine similarity of the full vectors within one space, excluding
-the selected record itself. The map uses two principal components of unit vectors
-(full SVD). It is a visual projection, not the neighbor metric. The coordinate
+the selected record itself. The map offers PCA (full SVD on unit vectors), UMAP (cosine metric,
+15 neighbors or N−1 for small spaces, min_dist 0.1, random initialization), and
+t-SNE (PCA preprocessing to at most 50 dimensions, perplexity min(30, N−1),
+PCA initialization, automatic learning rate, 1,000 iterations). UMAP and t-SNE
+use seed 42 and require at least four points; smaller spaces offer only PCA.
+Parameters and available methods are recorded per space. It is a visual projection, not the neighbor metric. The coordinate
 system is fitted afresh and can move or flip between releases. Independent spaces
-have no shared coordinate system. Rendering uses a canvas; the searchable list
+have no shared coordinate system. Rendering uses locally bundled Plotly 2.27.0, as in the legacy browser; the searchable list
 provides keyboard-accessible selection of the same concepts.
+
+## September 2026 correction
+
+Version 2.1 includes cellular components and molecular functions, which the initial
+v2 extractor mistakenly skipped. This restores peroxisome (GO:0005777) and other
+curated GO annotations to the term catalogue and score exports. The propagation
+formula is unchanged; the expanded input coverage changes association counts and
+specificity scores. `concept-text-v2` also includes cellular-component labels in
+mechanism/pathophysiology and cell/anatomy text, invalidating older vector caches.
+The validation counts below describe the initial v2 build, not v2.1.
 
 ## Identity and release contract
 

@@ -771,3 +771,16 @@ button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid
 #colorLegend label { cursor: pointer; }
 #colorLegend .swatch { display: inline-block; width: 12px; height: 12px; margin: 0 5px; border-radius: 50%; }
 #conceptMap { touch-action: none; }
+
+.embedding-layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 20px; margin-top: 20px; }
+.embedding-sidebar { display: flex; flex-direction: column; gap: 12px; }
+.embedding-sidebar select { width: 100%; padding: 9px; border: 1px solid var(--line); border-radius: 8px; background: white; }
+.embedding-sidebar #colorLegend { display: flex; flex-direction: column; flex-wrap: nowrap; max-height: 320px; }
+.embedding-plot { min-width: 0; }
+#conceptMap { height: 650px; width: 100%; }
+@media (max-width: 850px) { .embedding-layout { grid-template-columns: 1fr; } }
+
+.map-active .hero { display: block; padding: 18px 24px; }
+.map-active .hero h1 { font-size: 1.8rem; margin: 0; }
+.map-active .hero .eyebrow, .map-active .hero-text, .map-active .hero-links, .map-active .hero-meta { display: none; }
+.map-active .explorer-controls { padding: 14px 22px; }

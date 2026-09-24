@@ -18,8 +18,8 @@ from urllib.parse import quote
 import numpy as np
 import yaml
 
-METHOD = "context-v2-max-product"
-TEXT_VERSION = "concept-text-v1"
+METHOD = "context-v2.1-max-product"
+TEXT_VERSION = "concept-text-v2"
 PREFIXES = {"cell": "CL:", "anatomy": "UBERON:", "go": "GO:", "phenotype": "HP:"}
 PREDICATES = {
     "cell": {"is_a": 0.8, "develops_from": 0.6},
@@ -28,7 +28,8 @@ PREDICATES = {
     "phenotype": {"is_a": 0.8},
 }
 RELATIONS = {"BFO:0000050": "part_of", "RO:0002202": "develops_from"}
-SLOTS = {"cell": "cell_types", "anatomy": "locations", "go": "biological_processes"}
+SLOTS = {"cell": ("cell_types",), "anatomy": ("locations",),
+         "go": ("biological_processes", "cellular_components", "molecular_functions")}
 
 
 def digest(data: bytes) -> str:
@@ -124,7 +125,7 @@ def describe(items):
         for slot in ("name", "description"):
             if item.get(slot):
                 parts.append(str(item[slot]))
-        for slot in ("cell_types", "locations", "biological_processes", "molecular_functions", "genes"):
+        for slot in ("cell_types", "locations", "biological_processes", "cellular_components", "molecular_functions", "genes"):
             parts.extend(x.get("preferred_term") or x.get("term", {}).get("label", "")
                          for x in item.get(slot, []) or [] if isinstance(x, dict))
         for slot in ("phenotype_term", "treatment_term"):
@@ -163,8 +164,9 @@ def inventory(root: Path):
             for node in nodes:
                 node_id = f"{key}#pathophysiology/{quote(node['name'], safe='')}"
                 terms = []
-                for ontology, slot in SLOTS.items():
-                    for term, label in term_descriptors(node.get(slot)):
+                for ontology, slots in SLOTS.items():
+                    descriptors = [item for slot in slots for item in node.get(slot, []) or []]
+                    for term, label in term_descriptors(descriptors):
                         terms.append({"id": term, "label": label, "ontology": ontology})
                         if kind == "disease" and term.startswith(PREFIXES[ontology]):
                             observations.append((ontology, key, term, node['name']))
@@ -185,7 +187,7 @@ def inventory(root: Path):
                     if kind == "disease" and term.startswith("HP:"):
                         observations.append(("phenotype", key, term, phenotype.get("name", label)))
             if kind == "disease":
-                cell_items = [{slot: n.get(slot) for slot in ("cell_types", "locations")} for n in nodes]
+                cell_items = [{slot: n.get(slot) for slot in ("cell_types", "locations", "cellular_components")} for n in nodes]
                 entity["spaces"] = {"pathophysiology": describe(nodes),
                                     "phenotypes": describe(doc.get("phenotypes")),
                                     "treatments": describe(doc.get("treatments")),
@@ -280,7 +282,7 @@ def cached_vectors(texts, cache: Path, signature, encode):
     return result
 
 
-def project_and_neighbors(ids, vectors, k=10):
+def project_and_neighbors(ids, vectors, k=10, nonlinear=False):
     from sklearn.decomposition import PCA
 
     norms = np.linalg.norm(vectors, axis=1, keepdims=True)
@@ -293,6 +295,17 @@ def project_and_neighbors(ids, vectors, k=10):
             coordinates = np.column_stack((coordinates, np.zeros(len(ids))))
     else:
         coordinates = np.zeros((len(ids), 2))
+    projections = {"pca": coordinates}
+    if nonlinear and len(ids) >= 4:
+        from umap import UMAP
+        from sklearn.manifold import TSNE
+        projections["umap"] = UMAP(n_components=2, n_neighbors=min(15, len(ids)-1),
+                                   min_dist=0.1, metric="cosine", random_state=42,
+                                   n_jobs=1, init="random").fit_transform(unit)
+        reduced = PCA(n_components=min(50, len(ids), unit.shape[1]), svd_solver="full").fit_transform(unit)
+        projections["tsne"] = TSNE(n_components=2, perplexity=min(30, len(ids)-1),
+                                   init="pca", learning_rate="auto", random_state=42,
+                                   max_iter=1000).fit_transform(reduced)
     points = []
     for start in range(0, len(ids), 256):
         sims = unit[start:start + 256] @ unit.T
@@ -303,12 +316,14 @@ def project_and_neighbors(ids, vectors, k=10):
             top = np.argpartition(-scores, count)[:count] if count else []
             ordered = sorted(top, key=lambda j: (-float(scores[j]), ids[j]))
             points.append({"id": ids[i], "xy": coordinates[i].round(6).tolist(),
+                           "projections": {name: xy[i].round(6).tolist() for name, xy in projections.items()},
                            "neighbors": [{"id": ids[j], "cosine": round(float(scores[j]), 6)} for j in ordered]})
     return points
 
 
 def embedding_spaces(entities, config, cache, encode=None):
     signature = {"model": config['model'], "revision": config['model_revision'], "text_version": TEXT_VERSION, "max_length": None}
+    nonlinear = encode is None
     if encode is None:
         from model2vec import StaticModel
         from huggingface_hub import snapshot_download
@@ -332,9 +347,11 @@ def embedding_spaces(entities, config, cache, encode=None):
         excluded.extend({"id": active[i], "reason": "Model produced a zero vector"} for i in np.flatnonzero(~valid))
         active = [key for i, key in enumerate(active) if valid[i]]
         vectors = vectors[valid]
-        points = project_and_neighbors(active, vectors) if active else []
+        points = project_and_neighbors(active, vectors, nonlinear=nonlinear) if active else []
         spaces[name] = {"points": points, "excluded": excluded, "eligible_count": len(candidates),
                         "dimension": vectors.shape[1], "projection": "PCA of unit vectors (2D, full SVD)",
+                        "projection_methods": list(points[0]["projections"]) if points else [],
+                        "projection_parameters": {"seed": 42, "umap": {"metric": "cosine", "n_neighbors": min(15, max(0, len(active)-1)), "min_dist": 0.1, "init": "random"}, "tsne": {"pca_preprocessing": min(50, len(active), vectors.shape[1]), "perplexity": min(30, max(0, len(active)-1)), "max_iter": 1000}},
                         "neighbor_metric": "cosine in original vector space", **signature}
         print(f"{name}: {len(points)} represented, {len(excluded)} excluded", flush=True)
     return spaces
