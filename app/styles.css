@@ -614,3 +614,185 @@ body::before {
     grid-template-columns: 1fr;
   }
 }
+
+[hidden] { display: none !important; }
+.explorer-controls { margin: 24px 0; }
+.view-buttons { display: flex; gap: 12px; margin-top: 14px; }
+button, select { font: inherit; }
+.view-buttons button, #clearTermFilter, #spaceSelect { border: 1px solid var(--line); border-radius: 10px; padding: 10px 16px; background: var(--paper-strong); color: var(--ink); cursor: pointer; }
+.view-buttons button[aria-pressed="true"] { background: var(--accent); color: white; }
+button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid var(--warm); outline-offset: 3px; }
+#conceptMap { display: block; width: 100%; height: 400px; background: var(--paper-strong); border: 1px solid var(--line); border-radius: 12px; }
+.explorer-columns { display: grid; grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr); gap: 24px; margin-top: 24px; }
+#conceptResults { max-height: 650px; overflow: auto; }
+.concept-result { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.concept-result small { display: block; color: var(--muted); margin-top: 4px; }
+.concept-terms { display: flex; flex-wrap: wrap; gap: 8px; }
+.concept-terms a { padding: 5px 10px; background: rgba(14,109,99,0.08); border-radius: 10px; }
+#conceptDetail { overflow-wrap: anywhere; }
+#conceptDetail li { margin-bottom: 8px; }
+@media(max-width: 800px) { .explorer-columns { grid-template-columns: 1fr; } .view-buttons { flex-wrap: wrap; } }
+#spaceSelect { max-width: 100%; }
+#spaceInfo, #freshness { overflow-wrap: anywhere; }
+#embeddingView .panel { min-width: 0; }
+
+        /* Reader-facing AI-curation / not-medical-advice disclaimer.
+           Styles the bar emitted by _disclaimer.html.j2. Deliberately neutral
+           (grey, not amber) so it reads as distinct from the pre-alpha
+           ".notice-banner" it may sit alongside. Palette variables carry literal
+           fallbacks so this partial also renders correctly in templates that do
+           not include _palette.css.j2. */
+        .dismech-disclaimer {
+            /* Flex rather than an absolutely positioned button: the dismiss
+               control stays in flow, so it can never overlap the text however
+               the bar wraps on a narrow screen. */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 10px 16px;
+            background: var(--gray-100, #f3f4f6);
+            color: var(--gray-700, #374151);
+            border-bottom: 1px solid var(--gray-300, #d1d5db);
+            font-family: inherit;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* `display: flex` above outranks the UA rule for the `hidden`
+           attribute, so dismissal needs this to actually hide the bar. */
+        .dismech-disclaimer[hidden] {
+            display: none;
+        }
+
+        .dismech-disclaimer p {
+            flex: 1 1 auto;
+            min-width: 0;
+            max-width: var(--max-width, 960px);
+            margin: 0 auto;
+        }
+
+        .dismech-disclaimer strong {
+            color: var(--gray-900, #111827);
+        }
+
+        .dismech-disclaimer a {
+            color: var(--primary, #00838f);
+            text-decoration: underline;
+        }
+
+        /* Hidden until the script confirms it can act on a click, so a reader
+           without JavaScript is never shown a dead control. */
+        .dismech-disclaimer-dismiss {
+            display: none;
+        }
+
+        .dismech-disclaimer.is-dismissible .dismech-disclaimer-dismiss {
+            display: flex;
+            flex: 0 0 auto;
+            /* Clears the Hypothes.is sidebar, which mounts a toolbar over the
+               rightmost ~33px of every page that embeds the annotation client
+               (disorder.html.j2, module.html.j2) and swallows clicks there. The
+               offset is applied on every surface for consistency; it is only
+               whitespace on the pages without the client. Measured in headless
+               Chromium at 1280w: toolbar x 1247-1280, button right edge 44px. */
+            margin-right: 28px;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border: 0;
+            border-radius: 4px;
+            background: none;
+            color: inherit;
+            font: inherit;
+            font-size: 1.15rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .dismech-disclaimer-dismiss:hover {
+            background: var(--gray-300, #d1d5db);
+        }
+
+        .dismech-disclaimer-dismiss:focus-visible {
+            outline: 2px solid var(--primary, #00838f);
+            outline-offset: 2px;
+        }
+
+        /* The button's footprint (28px wide + 28px clearance) sits only on the
+           right, so the centred text lands about half that left of true centre.
+           Mirroring the footprint fixes it, but costs the same width again — so
+           it is only applied where there is room to spare. Below this, a small
+           optical offset beats losing 56px of text width on a phone. */
+        @media (min-width: 900px) {
+            .dismech-disclaimer.is-dismissible::before {
+                content: "";
+                flex: 0 0 auto;
+                width: 28px;
+                margin-left: 28px;
+            }
+        }
+
+        /* Non-dismissible footer line (_disclaimer_footer.html.j2). The bar can
+           be dismissed for the session; this cannot, so the page never ends up
+           carrying no disclaimer at all. */
+        .dismech-disclaimer-footer {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--gray-600, #4b5563);
+        }
+
+        /* `p.` is load-bearing. Both templates that use this partial also define
+           `.page-footer a` (teal, no underline) — equal specificity, but declared
+           thousands of lines later, so it would win. The extra type selector puts
+           this rule ahead of it. */
+        p.dismech-disclaimer-footer a {
+            color: inherit;
+            text-decoration: underline;
+        }
+
+.hero h1 { font-size: clamp(2rem, 4vw, 3.5rem); max-width: none; }
+.explorer-controls a, #embeddingView a { color: var(--accent-strong); }
+
+/* A term permalink is a detail page, with the catalogue one click away. */
+#ontologyView.term-focused { display: block; }
+#ontologyView.term-focused > .sidebar,
+#ontologyView.term-focused > .content > .panel:first-child { display: none; }
+#ontologyView.term-focused .content { display: block; }
+#ontologyView.term-focused #detailPanel { width: 100%; position: static; max-height: none; }
+.map-controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-top: 16px; }
+.map-controls select, .map-controls button, #rankLimit { padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); }
+#colorLegend { display: flex; flex-wrap: wrap; gap: 10px; max-height: 140px; overflow: auto; margin: 12px 0; }
+#colorLegend label { cursor: pointer; }
+#colorLegend .swatch { display: inline-block; width: 12px; height: 12px; margin: 0 5px; border-radius: 50%; }
+#conceptMap { touch-action: none; }
+
+.embedding-layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 20px; margin-top: 20px; }
+.embedding-sidebar { display: flex; flex-direction: column; gap: 12px; }
+.embedding-sidebar select { width: 100%; padding: 9px; border: 1px solid var(--line); border-radius: 8px; background: white; }
+.embedding-sidebar #colorLegend { display: flex; flex-direction: column; flex-wrap: nowrap; max-height: 320px; }
+.embedding-plot { min-width: 0; }
+#conceptMap { height: 650px; width: 100%; }
+@media (max-width: 850px) { .embedding-layout { grid-template-columns: 1fr; } }
+
+.map-active .hero { display: block; padding: 18px 24px; }
+.map-active .hero h1 { font-size: 1.8rem; margin: 0; }
+.map-active .hero .eyebrow, .map-active .hero-text, .map-active .hero-links, .map-active .hero-meta { display: none; }
+.map-active .explorer-controls { padding: 14px 22px; }
+
+.plot-with-key { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 16px; align-items: start; }
+.map-key { min-width: 0; border-left: 1px solid var(--line); padding-left: 14px; }
+.map-key h3 { margin: 0 0 10px; }
+.map-key #colorLegend { display: flex; flex-direction: column; flex-wrap: nowrap; max-height: 490px; }
+.map-key #colorLegend label { display: flex; align-items: baseline; gap: 4px; overflow-wrap: anywhere; }
+.map-key #colorLegend .swatch { flex: 0 0 14px; width: 14px; height: 14px; }
+@media (max-width: 1100px) {
+  .plot-with-key { grid-template-columns: 1fr; }
+  .map-key { border-left: 0; border-top: 1px solid var(--line); padding: 14px 0 0; }
+  .map-key #colorLegend { max-height: 240px; }
+}

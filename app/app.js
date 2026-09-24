@@ -10,6 +10,7 @@ class OntologyScoresApp {
     this.query = "";
     this.selectedTermKey = null;
     this.loadedScripts = new Set();
+    this.rankLimit = 25;
   }
 
   async init() {
@@ -19,6 +20,7 @@ class OntologyScoresApp {
         this.waitForGlobal("ontologyScoresOverview", "ontologyScoresOverviewReady"),
         this.waitForGlobal("ontologyScoresTermIndex", "ontologyScoresTermIndexReady"),
       ]);
+      if (manifest.release_id !== window.CONCEPT_RELEASE) throw new Error("The snapshot changed. Reload the page.");
       this.manifest = manifest;
       this.overview = overview;
       this.termIndex = termIndex;
@@ -70,7 +72,7 @@ class OntologyScoresApp {
 
     return new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = path;
+      script.src = `${path}?v=${encodeURIComponent(window.CONCEPT_RELEASE || "")}`;
       script.async = false;
       script.onload = () => {
         this.loadedScripts.add(path);
@@ -209,6 +211,7 @@ class OntologyScoresApp {
   restoreFromHash() {
     const hash = window.location.hash.replace(/^#/, "");
     if (!hash.startsWith("term/")) {
+      if (hash === "ontology") { this.selectedOntology = "all"; this.renderCatalogue(); }
       this.selectedTermKey = null;
       this.renderDetail(null);
       return;
@@ -220,6 +223,9 @@ class OntologyScoresApp {
     const termId = decodeURIComponent(encodedTermId);
     const term = this.termByKey.get(this.termKey(ontology, termId));
     if (!term) {
+      this.selectedTermKey = null;
+      this.renderDetail(null);
+      document.getElementById("detailPlaceholder").textContent = `No ranked associations for ${termId} in this snapshot. The annotation may be absent or outside the exported namespaces.`;
       return;
     }
     this.selectedOntology = ontology;
@@ -237,6 +243,8 @@ class OntologyScoresApp {
     this.renderOntologySummary(facetCounts);
 
     const results = this.filteredTerms().sort((left, right) => {
+      const exact = term => this.query && [term.term_id, term.term_label].some(value => value.toLowerCase() === this.query);
+      if (exact(left) !== exact(right)) return exact(left) ? -1 : 1;
       if (left.ontology !== right.ontology) {
         return left.ontology.localeCompare(right.ontology);
       }
@@ -296,15 +304,23 @@ class OntologyScoresApp {
   async loadTermDetail(term) {
     this.selectedTermKey = this.termKey(term.ontology, term.term_id);
     this.renderCatalogue();
+    const selectedKey = this.selectedTermKey;
     const cache = window.ontologyScoresTermShards || {};
     if (!cache[this.selectedTermKey]) {
       await this.loadScript(`${DATA_ROOT}/${term.shard_path}`);
     }
-    const detail = (window.ontologyScoresTermShards || {})[this.selectedTermKey];
+    if (selectedKey !== this.selectedTermKey) return;
+    const detail = (window.ontologyScoresTermShards || {})[selectedKey];
     if (!detail) {
       throw new Error(`Term shard did not populate for ${this.selectedTermKey}`);
     }
+    if (detail.release_id !== this.manifest.release_id) throw new Error("The snapshot changed. Reload the page.");
+    if (detail.columns) {
+      detail.diseases = detail.diseases.map(row => Object.fromEntries(detail.columns.map((key, i) => [key, row[i]])));
+      delete detail.columns;
+    }
     this.renderDetail(detail);
+    window.dispatchEvent(new CustomEvent("ontologyTermSelected", { detail }));
     this.revealDetail();
   }
 
@@ -312,6 +328,7 @@ class OntologyScoresApp {
     const placeholder = document.getElementById("detailPlaceholder");
     const root = document.getElementById("termDetail");
 
+    document.getElementById("ontologyView").classList.toggle("term-focused", Boolean(detail));
     if (!detail) {
       placeholder.classList.remove("hidden");
       root.classList.add("hidden");
@@ -322,8 +339,9 @@ class OntologyScoresApp {
     placeholder.classList.add("hidden");
     root.classList.remove("hidden");
 
-    const diseaseRows = detail.diseases.slice(0, 120).map((row) => {
-      const diseasePageUrl = this.dismechDiseaseUrl(row.source_file);
+    const diseaseRows = detail.diseases.slice(0, this.rankLimit).map((row) => {
+      const diseasePageUrl = this.dismechDiseaseUrl(row.source_file, row.disorder_name);
+      const explorerUrl = ConceptCore.entityRoute(ConceptCore.diseaseId(row.source_file));
       const diseaseNameHtml = diseasePageUrl
         ? `<a class="entity-link" href="${this.escapeAttribute(diseasePageUrl)}" target="_blank" rel="noopener noreferrer">${this.escapeHtml(row.disorder_name)}</a>`
         : this.escapeHtml(row.disorder_name);
@@ -342,7 +360,7 @@ class OntologyScoresApp {
       <article class="disease-row">
         <div>
           <h3 class="disease-name">${diseaseNameHtml}</h3>
-          <div class="disease-id">${diseaseCurieHtml}${dismechPageHtml ? ` · ${dismechPageHtml}` : ""}</div>
+          <div class="disease-id">${diseaseCurieHtml} · <a href="${this.escapeAttribute(explorerUrl)}">Explore similarities and mechanisms</a>${dismechPageHtml ? ` · ${dismechPageHtml}` : ""}</div>
         </div>
         <div class="score-stack">
           <span class="score-badge">score ${row.score.toFixed(3)}</span>
@@ -362,6 +380,7 @@ class OntologyScoresApp {
     }).join("");
 
     root.innerHTML = `
+      <a href="#ontology">← Browse all terms</a>
       <div class="detail-header">
         <div class="detail-title">
           <p class="eyebrow">${this.escapeHtml(detail.ontology_label)}</p>
@@ -374,8 +393,16 @@ class OntologyScoresApp {
           <span class="pill">top ${detail.top_score.toFixed(3)}</span>
         </div>
       </div>
+      <label for="rankLimit">Show ranked diseases</label>
+      <select id="rankLimit"><option value="10">Top 10</option><option value="25">Top 25</option><option value="50">Top 50</option><option value="100">Top 100</option><option value="100000">All</option></select>
+      <p>Showing ${Math.min(this.rankLimit, detail.diseases.length)} of ${detail.diseases.length} scored associations in this snapshot. Diseases without annotation support are not ranked.</p>
       <div class="disease-list">${diseaseRows}</div>
     `;
+    document.getElementById('rankLimit').value = String(this.rankLimit);
+    document.getElementById('rankLimit').addEventListener('change', event => {
+      this.rankLimit = Number(event.target.value);
+      this.renderDetail(detail);
+    });
   }
 
   revealDetail() {
@@ -432,12 +459,12 @@ class OntologyScoresApp {
     return `https://bioregistry.io/${encodeURIComponent(curie)}`;
   }
 
-  dismechDiseaseUrl(sourceFile) {
+  dismechDiseaseUrl(sourceFile, name) {
     if (!sourceFile) {
       return "";
     }
-    const slug = String(sourceFile).replace(/\.ya?ml$/i, "");
-    return `https://dismech.monarchinitiative.org/pages/disorders/${encodeURIComponent(slug)}`;
+    const slug = name.replaceAll(" ", "_").replaceAll("/", "_").replaceAll("(", "").replaceAll(")", "");
+    return `https://dismech.monarchinitiative.org/pages/disorders/${encodeURIComponent(slug)}.html`;
   }
 
   renderCurieLink(curie, label = curie) {
