@@ -120,7 +120,7 @@ class ConceptExplorer {
   }
   renderLegend() {
     const groups = [...new Set(this.catalog.spaces[this.space].points.map(p => this.group(this.entities[p.id])))].sort();
-    this.colors = new Map(groups.map((group, i) => [group, `hsl(${(i * 137.508) % 360} 60% 38%)`]));
+    this.colors = new Map(groups.map((group, i) => [group, `hsl(${(i * 137.508) % 360}, 60%, 38%)`]));
     const root = document.getElementById('colorLegend'); root.replaceChildren();
     for (const group of groups) {
       const label = document.createElement('label');

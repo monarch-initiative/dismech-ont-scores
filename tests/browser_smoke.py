@@ -99,6 +99,7 @@ try:
         page.locator('#colorLegend input').first.uncheck()
         assert not page.locator('#colorLegend input').first.is_checked()
         page.locator('#colorLegend input').first.check()
+        page.locator('#showLabels').uncheck()
         page.screenshot(path='/tmp/concept-explorer-desktop.png', full_page=True)
         page.set_viewport_size({'width': 390, 'height': 844})
         page.screenshot(path='/tmp/concept-explorer-mobile.png', full_page=True)
