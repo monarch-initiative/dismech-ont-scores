@@ -2,3 +2,10 @@ data/context_scores/raw/
 __pycache__/
 *.pyc
 build/site-data/**/*.json
+.venv/
+.cache/
+.sources/
+dist/
+.pytest_cache/
+dist-*/
+concept-build-*/

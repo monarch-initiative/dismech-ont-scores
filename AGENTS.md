@@ -1,24 +1,29 @@
-# Repository Guidelines
+# Repository guidelines
 
-## Project Structure & Module Organization
-`index.html` is the browser entrypoint. `app/` contains the static browser assets: `styles.css` and `app.js`. `scripts/build_browser_data.py` converts raw TSV exports into browser JavaScript shards and publishes downloadable TSV copies. `justfile` is the main entrypoint for local workflows. Generated raw TSVs live in `data/context_scores/raw/`. Browser output lives in `build/site-data/`; generated `.json` files there are ignored, while the `.js` files and `downloads/*.tsv` files are the static-site payload.
+This repository publishes the DisMech Concept Explorer. Curated assertions belong
+in upstream `monarch-initiative/dismech`; do not edit upstream KB content here.
+Read `METHODS.md` before changing scoring, extraction, or embedding semantics.
 
-## Build, Test, and Development Commands
-Use `just` from the repository root.
+- `scripts/concept_data.py`: current-source inventory, v2 scores and vector cache.
+- `scripts/build_site.py`: source snapshot, build, validation and publication artifact.
+- `scripts/build_browser_data.py`: existing term shards and TSV compatibility layer.
+- `app/`, `index.html`: browser sources; `config/build.json`: model and ontology inputs.
+- `dist/`: disposable build; `.cache/`: reusable vectors; neither is committed.
+- `build/site-data/`: retained March 2026 historical payload, not a build input.
 
-- `just rebuild ../dismech`: export fresh scores from a sibling `dismech` checkout and rebuild all browser data.
-- `just export-raw ../dismech`: create `data/context_scores/raw/context_scores.tsv` only.
-- `just build-browser`: regenerate `build/site-data/` from existing raw TSVs.
-- `just serve`: run a local static server at `http://localhost:8000/`.
-- `just clean`: remove generated raw and browser data.
+Use `uv sync --locked`; run `just test`, then a full `just rebuild /path/to/dismech`
+when changing extraction/scoring/rendering. Run `uv run playwright install chromium`
+and `just smoke` for UI changes. Inspect desktop/mobile screenshots generated under
+`/tmp/concept-explorer-*.png`. A fixture build alone is not a full-corpus test.
 
-If your `dismech` checkout is elsewhere, set `DISMECH_DIR=/path/to/dismech` or pass the path explicitly.
+Preserve old term routes and download URLs. Keep current entity identity separate
+from the text-vector cache. Never use cache rows as the published entity inventory.
+Any text rendering change must bump `TEXT_VERSION`. Record scientific method
+changes explicitly in `METHODS.md` and the release method version; do not imply
+comparability with old scores or vector spaces. Fail on malformed input rather
+than silently dropping curated records.
 
-## Coding Style & Naming Conventions
-Match the existing style instead of introducing a formatter-specific rewrite. Python uses 4-space indentation, type hints, `snake_case`, and small helper functions. Frontend files use 2-space indentation, `camelCase` for JavaScript identifiers, and clear DOM id names such as `termResults` or `ontologyPills`. Keep filenames lowercase with underscores for Python and simple lowercase names for static assets.
-
-## Testing Guidelines
-There is no automated test suite yet. Treat rebuilds as the main verification path: run `just rebuild ../dismech` after Python changes and `just serve` after frontend changes, then confirm the browser loads, search works, and term detail pages render correctly. When changing data generation logic, verify `build/site-data/indexes/manifest.js`, `overview.js`, `term_index.js`, and a sample shard under `build/site-data/terms/`.
-
-## Commit & Pull Request Guidelines
-Use a simple imperative style such as `build: regenerate browser data` or `app: refine term detail rendering`. Keep commits focused. In pull requests, include the purpose, the `dismech` source revision or path used for rebuilds, commands run for verification, and screenshots for visible UI changes.
+Use targeted staging and commit only source/tests/docs/lockfiles. Generated site
+assets are deployed by Actions, never committed. Python uses four-space indents;
+JavaScript uses two. PRs should explain user-visible changes, method changes,
+source SHA used for full-corpus validation, and tests run.

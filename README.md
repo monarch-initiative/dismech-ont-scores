@@ -1,57 +1,97 @@
-# dismech-ont-scores
+# DisMech Concept Explorer
 
-Derived ontology-centric disease scores from
-[dismech](https://github.com/monarch-initiative/dismech), published as a static
-browser and downloadable TSVs.
+Explore ontology associations, disease similarities, and individual mechanisms
+from one current [DisMech](https://github.com/monarch-initiative/dismech) snapshot.
 
-- Live browser: https://monarch-initiative.github.io/dismech-ont-scores/
-- Source knowledge base: https://dismech.monarchinitiative.org/
-- Scoring implementation: https://github.com/monarch-initiative/dismech/blob/main/src/dismech/export/context_score.py
+- [Browser](https://monarch-initiative.github.io/dismech-ont-scores/)
+- [Methods, score change, and limitations](METHODS.md)
+- [Build history](https://github.com/monarch-initiative/dismech-ont-scores/actions)
 
-This repository is 100% derived. It is not the source of truth for disease
-curation. The curated assertions, scoring code, and provenance model live in
-`dismech`; this repo publishes the resulting browser payloads and download files.
+Search a term, inspect its ranked diseases and annotation provenance, and follow
+**Explore similarities and mechanisms** into the map. Select a disease's mechanism
+to compare it with nodes from other diseases and modules. Ontology selection
+filters the map; **Clear term selection** returns to the whole space. Neighbors
+use full-vector cosine similarity; the map offers UMAP, t-SNE, and PCA projections.
+Term permalinks open a full-width ranking with Top 10/25/50/100 or All controls.
+The displayed count is the number of supported associations, not an arbitrary
+minimum: a term can legitimately have only one scored disease.
 
-## What Is Published Here
+The map ports the legacy Plotly interface: a controls sidebar, drag-to-zoom,
+scroll zoom, pan, reset, image download, labels, color filtering (All/None), and
+focused-neighborhood zoom. Use **Select points** or **Lasso points** to restrict
+the list and CSV export; zooming changes the viewport without changing membership.
+Color by first curated category, first parent classification, or concept type.
+Mechanisms inherit metadata from their parent. Search and term filters combine
+with color and point selections. UMAP/t-SNE are offered for spaces with at least
+four points; smaller spaces use PCA. All coordinates are newly generated from the
+current vectors, not imported from the legacy browser.
 
-- An ontology-first browser over CL, UBERON, GO, and HPO terms.
-- Raw TSV downloads for users who want the full exports.
-- Static JavaScript shards that let the site run directly on GitHub Pages.
+This browser is a downstream derived view. Disease/module curation remains in
+DisMech. Source YAML is never copied into this repository's tracked files.
 
-## How Scores Are Made
+## Rebuild and test
 
-Scores are derived from curated annotations in `dismech`.
+Python 3.12, Node 22, and [uv](https://docs.astral.sh/uv/) are required. No API key
+or paid embedding service is needed. The first build downloads a pinned local
+model and four ontology releases; vector/model caches make later builds cheaper.
 
-1. Direct disease-context signal comes from curated ontology annotations.
-   - Cells: `pathophysiology[].cell_types`
-   - Anatomy: `pathophysiology[].locations`
-   - Biological processes: `pathophysiology[].biological_processes`
-   - Phenotypes: `phenotypes[].phenotype_term`
-2. Each supporting node is weighted by its place in the disease mechanism graph.
-   Upstream mechanism nodes contribute more than downstream terminal nodes.
-3. Direct signal is propagated upward through ontology structure.
-   - CL: `is_a`, `develops_from`
-   - UBERON: `is_a`, `part_of`
-   - GO: `is_a`, `part_of`
-   - HPO: `is_a`
-4. Broad ancestors are penalized using corpus-level specificity, so generic
-   terms score lower than specific disease-relevant descendants.
-5. The exports preserve both the total score and its components, including
-   `direct_score`, `propagated_score`, `specificity`, and best-source provenance.
+```sh
+uv sync --locked
+uv run pytest -q
+node --test tests/core.test.cjs
+uv run python scripts/build_site.py --source ../dismech
+uv run python scripts/build_site.py --validate
+uv run playwright install chromium
+uv run python tests/browser_smoke.py
+uv run python -m http.server 8000 --directory dist
+```
 
-## Downloads
+Alternatively, `just rebuild ../dismech`, `just test`, and `just serve` wrap these
+commands. Open `http://localhost:8000/`; the new inventory is fetched over HTTP,
+so opening the HTML via `file://` is no longer supported.
 
-- Full export: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/context_scores.tsv
-- Cell scores: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/cell_scores.tsv
-- Anatomy scores: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/anatomy_scores.tsv
-- GO scores: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/go_scores.tsv
-- Phenotype scores: https://monarch-initiative.github.io/dismech-ont-scores/build/site-data/downloads/phenotype_scores.tsv
+`--source` must name a Git checkout with clean `kb/disorders` and `kb/modules`
+inputs. All other DisMech files, including reference caches, are outside the
+builder's read scope. `--ontology-dir DIR` uses explicit offline snapshots named
+`cell.obo`, `anatomy.obo`, `go.obo`, and `phenotype.obo`. Their checksums and OBO
+versions are recorded exactly as for network downloads.
 
-## Notes For Maintainers
+The build produces `dist/` only after generation and validation succeed. Generated
+assets are deployed as an artifact, not committed. The old `build/site-data/`
+files remain as the March historical snapshot and are never used as build inputs.
 
-- The published site entrypoint is `index.html`.
-- Browser payloads live under `build/site-data/`.
-- Generated JSON is optional debug output only; the published site uses JS shards
-  and TSV downloads.
-- Regeneration is done from a local `dismech` checkout via the scripts and
-  `justfile` in this repo.
+## Publication
+
+`.github/workflows/pages.yml` follows the monarch-nams/dismech-history pattern:
+
+- Daily at 09:53 UTC, on main pushes, or by manual dispatch: check out current
+  DisMech main, regenerate scores and embeddings, validate, smoke-test, and deploy.
+- PRs: run contracts and build/smoke-test a small offline fixture. Fixture output
+  cannot be uploaded or deployed. A full-corpus build is also required before
+  accepting changes to extraction/scoring/rendering.
+- Build permissions are read-only. Only the main-branch deploy job receives Pages
+  write and OIDC permissions. No cross-repository write token is required.
+
+**Initial rollout:** after this workflow is merged, set Settings → Pages → Source
+to **GitHub Actions**, then dispatch the workflow on main. Confirm its validated
+artifact deploys before merging the companion DisMech legacy-browser redirects.
+That ordering prevents old URLs from redirecting to an unbuilt explorer.
+
+The main page exposes build date, source SHA, model, coverage, and build status.
+`manifest.json` adds source-file hashes, ontology versions/checksums and output
+checksums. A failed build leaves the last successful site online; snapshots older
+than three days are marked visibly.
+
+## Scores and compatibility
+
+The missing original exporter has been replaced by **context-v2-max-product**.
+This explicitly changes scoring: direct support, decayed ontology paths, and
+corpus specificity replace the unrecoverable causal-depth rule. Scores are
+heuristics, not disease probabilities. See [METHODS.md](METHODS.md) before use.
+Local model2vec embeddings likewise replace the legacy ada representations; there
+is no claim of numerical comparability or superior biomedical retrieval quality.
+
+Existing `#term/<ontology>/<CURIE>` links and all five TSV download paths under
+`build/site-data/downloads/` are retained. `manifest.json` identifies the method
+and source of those files. The March data remain accessible at the immutable
+[snapshot commit](https://github.com/monarch-initiative/dismech-ont-scores/tree/567c7b957ed44fd4803aa89f87e21c403cfdf67e/build/site-data).

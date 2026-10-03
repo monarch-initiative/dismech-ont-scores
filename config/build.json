@@ -1,0 +1,10 @@
+{
+  "model": "minishlab/potion-base-8M",
+  "model_revision": "bf8b056651a2c21b8d2565580b8569da283cab23",
+  "ontology_urls": {
+    "cell": "https://purl.obolibrary.org/obo/cl.obo",
+    "anatomy": "https://purl.obolibrary.org/obo/uberon.obo",
+    "go": "https://current.geneontology.org/ontology/go-basic.obo",
+    "phenotype": "https://purl.obolibrary.org/obo/hp.obo"
+  }
+}

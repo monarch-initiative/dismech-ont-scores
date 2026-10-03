@@ -18,25 +18,25 @@ ONTOLOGY_META = {
     "cell": {
         "label": "Cell Types",
         "short_label": "Cell",
-        "description": "Disease priors projected onto Cell Ontology terms.",
+        "description": "Curated disease annotations projected onto Cell Ontology terms.",
         "prefix": "CL",
     },
     "anatomy": {
         "label": "Anatomy",
         "short_label": "Anatomy",
-        "description": "Disease priors projected onto UBERON anatomical terms.",
+        "description": "Curated disease annotations projected onto UBERON anatomical terms.",
         "prefix": "UBERON",
     },
     "go": {
-        "label": "Biological Processes",
+        "label": "Gene Ontology",
         "short_label": "GO",
-        "description": "Disease priors projected onto Gene Ontology process terms.",
+        "description": "Curated disease annotations projected onto Gene Ontology process terms.",
         "prefix": "GO",
     },
     "phenotype": {
         "label": "Phenotypes",
         "short_label": "HPO",
-        "description": "Disease priors projected onto Human Phenotype Ontology terms.",
+        "description": "Curated disease annotations projected onto Human Phenotype Ontology terms.",
         "prefix": "HP",
     },
 }
@@ -230,7 +230,7 @@ def build_downloads(raw_dir: Path, output_dir: Path) -> list[dict]:
 
 def write_json(path: Path, payload: dict | list) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(payload, separators=(",", ":"), sort_keys=False) + "\n", encoding="utf-8")
 
 
 def write_js_assignment(path: Path, statement: str) -> None:
@@ -239,13 +239,13 @@ def write_js_assignment(path: Path, statement: str) -> None:
 
 
 def write_js_global(path: Path, global_name: str, payload: dict | list, event_name: str) -> None:
-    json_payload = json.dumps(payload, indent=2, sort_keys=False)
+    json_payload = json.dumps(payload, separators=(",", ":"), sort_keys=False)
     statement = f"window.{global_name} = {json_payload};\nwindow.dispatchEvent(new Event('{event_name}'));"
     write_js_assignment(path, statement)
 
 
 def write_term_shard_js(path: Path, cache_key: str, payload: dict) -> None:
-    json_payload = json.dumps(payload, indent=2, sort_keys=False)
+    json_payload = json.dumps(payload, separators=(",", ":"), sort_keys=False)
     statement = (
         "window.ontologyScoresTermShards = window.ontologyScoresTermShards || {};\n"
         f"window.ontologyScoresTermShards[{json.dumps(cache_key)}] = {json_payload};\n"
@@ -341,7 +341,7 @@ def build_indexes(
     write_js_global(index_dir / "term_index.js", "ontologyScoresTermIndex", term_index, "ontologyScoresTermIndexReady")
 
 
-def write_term_shards(output_dir: Path, terms: dict[tuple[str, str], TermRecord], *, write_json_files: bool) -> None:
+def write_term_shards(output_dir: Path, terms: dict[tuple[str, str], TermRecord], *, write_json_files: bool, compact_rows: bool = False, release_id: str = "") -> None:
     for record in terms.values():
         payload = {
             "ontology": record.ontology,
@@ -353,7 +353,12 @@ def write_term_shards(output_dir: Path, terms: dict[tuple[str, str], TermRecord]
             "top_score": round(record.top_score, 6),
             "mean_score": round(record.mean_score, 6),
             "diseases": record.rows,
+            "release_id": release_id,
         }
+        if compact_rows and record.rows:
+            columns = list(record.rows[0])
+            payload['columns'] = columns
+            payload['diseases'] = [[row[key] for key in columns] for row in record.rows]
         shard_dir = output_dir / "terms" / record.ontology
         stem = safe_term_id(record.term_id)
         cache_key = f"{record.ontology}::{record.term_id}"
